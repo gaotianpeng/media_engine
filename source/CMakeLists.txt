@@ -1,1 +1,1 @@
-add_executable(UI main.cpp)
+add_subdirectory(UI)

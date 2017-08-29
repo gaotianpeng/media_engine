@@ -1,4 +1,19 @@
 cmake_minimum_required(VERSION 3.3)
 
 project(media_engine CXX)
+
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake")
+
+message(STATUS "The cmake module path is: " ${CMAKE_MODULE_PATH})
+if(MSVC)
+    set(CMAKE_C_FLAGS_DEBUG "/DDEBUG=1 /D_DEBUG=1 ${CMAKE_C_FLAGS_DEBUG}")
+    set(CMAKE_CXX_FLAGS_DEBUG "/DDEBUG=1 /D_DEBUG=1 ${CMAKE_C_FLAGS_DEBUG}")
+
+    if(NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SAFESEH:NO")
+        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SAFESEH:NO")
+        set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} /SAFESEH:NO")
+    endif()
+endif()
+
 add_subdirectory(source)
