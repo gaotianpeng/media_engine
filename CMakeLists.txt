@@ -16,4 +16,7 @@ if(MSVC)
     endif()
 endif()
 
+set(DEPENDENCY_PATH "${CMAKE_SOURCE_DIR}/depencency")
+message(STATUS "The dependency path is :" ${DEPENDENCY_PATH})
+
 add_subdirectory(source)
