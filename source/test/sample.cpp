@@ -1,8 +1,5 @@
-// Copyright 2005, Google Inc.
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-#include "sample1.h"
+
+#include "sample.h"
 
 // Returns n! (the factorial of n).  For negative n, n! is defined to be 1.
 int Factorial(int n) {
@@ -14,7 +11,7 @@ int Factorial(int n) {
   return result;
 }
 
-// Returns true iff n is a prime number.
+// Returns true if n is a prime number.
 bool IsPrime(int n) {
   // Trivial case 1: small numbers
   if (n <= 1) return false;
