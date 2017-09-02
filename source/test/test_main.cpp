@@ -3,6 +3,8 @@
 #include "gtest.h"
 #include "easylogging++.h"
 
+#include "../me/math.h"
+
 INITIALIZE_EASYLOGGINGPP
 
 using ::testing::InitGoogleTest;
@@ -61,7 +63,8 @@ int main(int argc, char **argv)
 	InitGoogleTest(&argc, argv);
 
 	LOG(INFO) << "Starting...";
-
+	
+	print_test(); 
 	int ret_val = RUN_ALL_TESTS();
 	return ret_val;
 }

@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.3)
+
 option(ENABLE_UI "Enables the media_engine user interfaces" ON)
 if(DISABLE_UI)
 	message(STATUS "UI disabled")
