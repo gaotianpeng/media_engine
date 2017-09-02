@@ -1,11 +1,4 @@
-
 cmake_minimum_required(VERSION 3.3)
-
-set(CMAKE_LIBRARY_PATH ${PROJECT_SOURCE_DIR}/dependency/bin)
-if(DEVELOP_MODE)
-	set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} ${LIBRARY_OUTPUT_PATH})
-endif()
-link_directories(${CMAKE_LIBRARY_PATH})
 
 
 set(MyCategory)

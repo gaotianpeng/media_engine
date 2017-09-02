@@ -4,10 +4,13 @@
 #include "easylogging++.h"
 
 #include "../me/math.h"
+#include "rapidjson/document.h"
+#include "rapidjson/prettywriter.h"
 
 INITIALIZE_EASYLOGGINGPP
 
 using ::testing::InitGoogleTest;
+using namespace rapidjson; 
 
 namespace {
 
@@ -64,6 +67,25 @@ int main(int argc, char **argv)
 
 	LOG(INFO) << "Starting...";
 	
+	////////////////////////////////////////////////////////////////////////////
+	// 1. Parse a JSON text string to a document.
+
+	const char json[] = " { \"hello\" : \"world\", \"t\" : true , \"f\" : false, \"n\": null, \"i\":123, \"pi\": 3.1416, \"a\":[1, 2, 3, 4] } ";
+	printf("Original JSON:\n %s\n", json);
+
+	Document document; 
+	char buffer[sizeof(json)]; 
+	memcpy(buffer, json, sizeof(json)); 
+	if (document.ParseInsitu(buffer).HasParseError())
+		return 1; 
+
+	printf("\nAccess values in document:\n");
+	assert(document.IsObject());    // Document is a JSON value represents the root of DOM. Root can be either an object or array.
+
+	assert(document.HasMember("hello"));
+	assert(document["hello"].IsString());
+	printf("hello = %s\n", document["hello"].GetString());
+
 	print_test(); 
 	int ret_val = RUN_ALL_TESTS();
 	return ret_val;

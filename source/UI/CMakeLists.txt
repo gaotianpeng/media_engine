@@ -34,7 +34,7 @@ endif()
 find_package(Qt5Widgets ${FIND_MODE})
 
 if(NOT Qt5Widgets_FOUND)
-	if (ENABLE_UI)
+	if(ENABLE_UI)
 		message(FATAL_ERROR "Failed to find Qt5")
 	else()
 		message(STATUS "Qt5 not found - UI disabled")
@@ -45,14 +45,27 @@ endif()
 include_directories(${CMAKE_PREFIX_PATH}/include)
 message(STATUS ${CMAKE_PREFIX_PATH})
 
-add_executable(UI WIN32 main.cpp)
-target_link_libraries(UI Qt5::Widgets)
-
 if(WIN32)
 	if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 		set(_output_suffix "64")
 	else()
 		set(_output_suffix "32")
 	endif()
-
 endif()
+
+file(GLOB me_HEADERS "*.h")
+file(GLOB me_SOURCES "*.cpp")
+
+set(me_UI 
+	forms/MEBasic.ui)
+
+message(STATUS "The me_UI dir is: " ${me_UI})
+
+qt5_wrap_ui(me_UI_HEADERS ${me_UI})
+
+add_executable(UI WIN32
+	${me_HEADERS}
+	${me_SOURCES}
+	${me_UI})
+
+target_link_libraries(UI Qt5::Widgets)

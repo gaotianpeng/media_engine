@@ -1,12 +1,13 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QLabel>
+#include "win-basic-main.h"
 
 int main(int argc, char* argv[])
 {
 	QApplication a(argc, argv);
-    QLabel* lab = new QLabel(QStringLiteral("Hello world")); 
-    lab->show(); 
-    
+
+	MEBasic basic; 
+	basic.show(); 
     a.exec(); 
     return 0; 
 }
