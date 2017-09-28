@@ -6,4 +6,5 @@ add_subdirectory(UI)
 add_subdirectory(test)
 add_subdirectory(me)
 add_subdirectory(coding_module)
+add_subdirectory(utility)
 

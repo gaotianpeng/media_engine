@@ -15,6 +15,7 @@ SET(LIB_INTERNAL_DEPS
 	${GTEST_LIB}
 	${LOG_LIB}
 	${DEPS_LIB}
+	utility.lib
 )
 
 me_add_executable(unittest)
