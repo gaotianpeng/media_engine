@@ -1,6 +1,6 @@
 #include <limits.h>
 #include "sample.h"
-#include "gtest.h"
+#include "gtest/gtest.h"
 #include "easylogging++.h"
 
 #include "../me/math.h"
