@@ -1,0 +1,23 @@
+#include <limits.h>
+#include "sample.h"
+#include "gmock/gmock.h"
+#include "easylogging++.h"
+
+#include "../me/math.h"
+#include "rapidjson/document.h"
+#include "rapidjson/prettywriter.h"
+#include "../utility/sys_info.h"
+#include "Psapi.h"
+
+INITIALIZE_EASYLOGGINGPP
+
+using ::testing::InitGoogleTest;
+
+int main(int argc, char **argv) 
+{
+	InitGoogleTest(&argc, argv);
+
+	int ret_val = RUN_ALL_TESTS();
+	system("pause"); 
+	return ret_val;
+}
