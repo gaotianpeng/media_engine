@@ -1,0 +1,32 @@
+<RCC>
+  <qresource prefix="/Course">
+    <file>course/combo-down.png</file>
+    <file>course/combo-up.png</file>
+    <file>course/close.png</file>
+    <file>course/close-hover.png</file>
+    <file>course/open.png</file>
+    <file>course/open-hover.png</file>
+    <file>course/full-normal.png</file>
+    <file>course/full-press.png</file>
+    <file>course/handup-press.png</file>
+    <file>course/handdeny.png</file>
+    <file>course/handing.png</file>
+    <file>course/handup.png</file>
+    <file>course/cameraOff.png</file>
+    <file>course/cameraOffBG.png</file>
+    <file>course/close-normal.png</file>
+    <file>course/close-press.png</file>
+    <file>course/course.png</file>
+    <file>course/logo.png</file>
+    <file>course/logo-portal.png</file>
+    <file>course/mute.png</file>
+    <file>course/file.png</file>
+    <file>course/file_press.png</file>
+    <file>course/pause.png</file>
+    <file>course/pause_press.png</file>
+    <file>course/play.png</file>
+    <file>course/play_press.png</file>
+    <file>course/voice.png</file>
+    <file>course/volice_press.png</file>
+  </qresource>
+</RCC>

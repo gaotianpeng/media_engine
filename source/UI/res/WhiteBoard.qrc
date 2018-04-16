@@ -1,0 +1,58 @@
+<RCC>
+  <qresource prefix="/tools">
+    <file>whiteboard/tools/clear-normal.png</file>
+    <file>whiteboard/tools/clear-press.png</file>
+    <file>whiteboard/tools/ellipse-fill-normal.png</file>
+    <file>whiteboard/tools/ellipse-fill-press.png</file>
+    <file>whiteboard/tools/ellipse-normal.png</file>
+    <file>whiteboard/tools/ellipse-press.png</file>
+    <file>whiteboard/tools/eraser-hover.png</file>
+    <file>whiteboard/tools/eraser-normal.png</file>
+    <file>whiteboard/tools/line-hover.png</file>
+    <file>whiteboard/tools/line-normal.png</file>
+    <file>whiteboard/tools/pen-hover.png</file>
+    <file>whiteboard/tools/pen-normal.png</file>
+    <file>whiteboard/tools/pick-normal.png</file>
+    <file>whiteboard/tools/pick-press.png</file>
+    <file>whiteboard/tools/rect-fill-normal.png</file>
+    <file>whiteboard/tools/rect-fill-press.png</file>
+    <file>whiteboard/tools/rect-normal.png</file>
+    <file>whiteboard/tools/rect-press.png</file>
+    <file>whiteboard/tools/select-hover.png</file>
+    <file>whiteboard/tools/select-normal.png</file>
+    <file>whiteboard/tools/shape-hover.png</file>
+    <file>whiteboard/tools/shape-normal.png</file>
+    <file>whiteboard/tools/upload-normal.png</file>
+    <file>whiteboard/tools/upload-press.png</file>
+  </qresource>
+  <qresource prefix="/pages">
+    <file>whiteboard/pages/copy-disable.png</file>
+    <file>whiteboard/pages/remove-disable.png</file>
+    <file>whiteboard/pages/copy-normal.png</file>
+    <file>whiteboard/pages/copy-press.png</file>
+    <file>whiteboard/pages/remove-normal.png</file>
+    <file>whiteboard/pages/remove-press.png</file>
+    <file>whiteboard/pages/redo-disable.png</file>
+    <file>whiteboard/pages/add-disable.png</file>
+    <file>whiteboard/pages/add-normal.png</file>
+    <file>whiteboard/pages/add-press.png</file>
+    <file>whiteboard/pages/delete-disable.png</file>
+    <file>whiteboard/pages/delete-normal.png</file>
+    <file>whiteboard/pages/delete-press.png</file>
+    <file>whiteboard/pages/left-disable.png</file>
+    <file>whiteboard/pages/left-normal.png</file>
+    <file>whiteboard/pages/left-press.png</file>
+    <file>whiteboard/pages/right-disable.png</file>
+    <file>whiteboard/pages/right-normal.png</file>
+    <file>whiteboard/pages/right-press.png</file>
+    <file>whiteboard/pages/redo-normal.png</file>
+    <file>whiteboard/pages/redo-press.png</file>
+    <file>whiteboard/pages/undo-disable.png</file>
+    <file>whiteboard/pages/undo-normal.png</file>
+    <file>whiteboard/pages/undo-press.png</file>
+  </qresource>
+  <qresource prefix="/dialog">
+    <file>whiteboard/dialog/close-normal.png</file>
+    <file>whiteboard/dialog/close-press.png</file>
+  </qresource>
+</RCC>

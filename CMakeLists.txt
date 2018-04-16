@@ -12,6 +12,11 @@ endif()
 
 message(STATUS "The cmake module path is: " ${CMAKE_MODULE_PATH})
 
+
+if(WIN32)
+    add_definitions(-DUNICODE -D_UNICODE -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS)
+endif()
+
 if(MSVC)
     set(CMAKE_C_FLAGS_DEBUG "/DDEBUG=1 /D_DEBUG=1 ${CMAKE_C_FLAGS_DEBUG}")
     set(CMAKE_CXX_FLAGS_DEBUG "/DDEBUG=1 /D_DEBUG=1 ${CMAKE_C_FLAGS_DEBUG}")

@@ -1,0 +1,109 @@
+#ifndef txCloud_h_
+#define txCloud_h_
+
+#ifdef iLiveSDKLogExp
+#define LogAPI __declspec(dllexport)
+#else
+#define LogAPI 
+#endif
+#include <string>
+
+using namespace std;
+
+	enum E_iLiveLogLevel
+	{
+		E_LogNone = 0,	///< 无日志
+		E_LogError,		///< 错误
+		E_LogWarn,		///< 警告
+		E_LogInfo,		///< 信息
+		E_LogDebug		///< 调试
+	};
+
+	/**
+	@brief 设置日志目录。
+	@param [in] szLogPath 日志目录;
+	@note 默认路径为当前目录; 调用示例: SetiLiveLogPath("./txsdklog/");
+	@return 结果，true成功，false失败
+	*/
+	bool SetiLiveLogPath(std::string szLogPath);
+	/**
+	@brief 获取日志目录路径
+	@return 日志路径
+	*/
+	const std::string& GetiLiveLogPath();
+	/**
+	@brief 设置日志级别.
+	@param [in] logLevel 日志级别
+	@note 设置日志级别后，只有高于此级别的日志才会输出；如，日志级别为E_LogWarn时，只会打印E_LogError
+	和E_LogWarn级别的日志；默认日志级别为E_LogDebug;
+	*/
+	void SetiLiveLogLevel(E_iLiveLogLevel logLevel);
+
+	void ClearLog();
+	void DoClearLog(const std::string& szPath, const std::string& szPre, uint32_t day);
+	
+	/**
+	@brief 输出Error日志信息.
+	@param [in] szModule 模块名.
+	@param [in] szFormat 日志内容格式.
+	@note 使用方法类似prinf()函数.
+	*/
+	LogAPI void txCloudEduLog_e(const char* szModule, const char* szFormat, ...);
+	/**
+	@brief 输出Error日志信息(双字节版本).
+	@param [in] szModule 模块名.
+	@param [in] szFormat 日志内容格式.
+	@note 使用方法类似wprintf()函数.
+	*/
+	LogAPI void txCloudEduLog_e(const wchar_t* szModule, const wchar_t* szFormat, ...);
+
+	/**
+	@brief 输出Warn日志信息.
+	@param [in] szModule 模块名.
+	@param [in] szFormat 日志内容格式.
+	@note 使用方法类似prinf()函数.
+	*/
+	LogAPI void txCloudEduLog_w(const char* szModule, const char* szFormat, ...);
+	/**
+	@brief 输出Warn日志信息(双字节版本).
+	@param [in] szModule 模块名.
+	@param [in] szFormat 日志内容格式.
+	@note 使用方法类似wprintf()函数.
+	*/
+	LogAPI void txCloudEduLog_w(const wchar_t* szModule, const wchar_t* szFormat, ...);
+
+	/**
+	@brief 输出Info日志信息.
+	@param [in] szModule 模块名.
+	@param [in] szFormat 日志内容格式.
+	@note 使用方法类似prinf()函数.
+	*/
+	LogAPI void txCloudEduLog_i(const char* szModule, const char* szFormat, ...);
+	/**
+	@brief 输出Info日志信息(双字节版本).
+	@param [in] szModule 模块名.
+	@param [in] szFormat 日志内容格式.
+	@note 使用方法类似wprintf()函数.
+	*/
+	LogAPI void txCloudEduLog_i(const wchar_t* szModule, const wchar_t* szFormat, ...);
+
+	/**
+	@brief 输出Debug日志信息.
+	@param [in] szModule 模块名.
+	@param [in] szFormat 日志内容格式.
+	@note 使用方法类似prinf()函数.
+	*/
+	LogAPI void txCloudEduLog_d(const char* szModule, const char* szFormat, ...);
+	/**
+	@brief 输出Debug日志信息(双字节版本).
+	@param [in] szModule 模块名.
+	@param [in] szFormat 日志内容格式.
+	@note 使用方法类似wprintf()函数.
+	*/
+	LogAPI void txCloudEduLog_d(const wchar_t* szModule, const wchar_t* szFormat, ...);
+
+	LogAPI void txCloudEduLog_k(const char* szModule, const char* szFormat, ...);
+	LogAPI void txCloudEduLog_k(const wchar_t* szModule, const wchar_t* szFormat, ...);
+
+
+#endif 

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>QWidgetVolume</class>
+ <widget class="QWidget" name="QWidgetVolume">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>92</width>
+    <height>143</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>QWidgetVolume</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">border: none;
+background: #7f000000;
+</string>
+  </property>
+  <widget class="QSlider" name="vsVolume">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>20</width>
+     <height>121</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QSlider::groove:vertical {  
+
+background: #cbcbcb;  
+width: 6px;  
+border-radius: 1px;  
+padding-left:-1px;  
+padding-right:-1px;  
+padding-top:-1px;  
+padding-bottom:-1px;  
+} 
+QSlider::sub-page:vertical {  
+background: #cbcbcb;  
+
+border-radius: 2px;  
+} 
+QSlider::add-page:vertical {  
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,   
+    stop:0 #439cf4, stop:1 #439cf4);  
+background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1,  
+    stop: 0 #439cf4, stop: 1 #439cf4);  
+width: 10px;  
+border-radius: 2px;  
+}
+QSlider::handle:vertical   
+{    
+    background: rgb(0, 110, 255);
+     margin: 0px -5px 0px -5px; 
+    height: 7px;
+}  </string>
+   </property>
+   <property name="maximum">
+    <number>100</number>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
+   </property>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>

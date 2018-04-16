@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>QDialogDeviceMgr</class>
+ <widget class="QWidget" name="QDialogDeviceMgr">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>441</width>
+    <height>633</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>QDialogDeviceMgr</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <widget class="QWidget" name="widget" native="true">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>2</x>
+     <y>2</y>
+     <width>437</width>
+     <height>629</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background: #ffffff;
+</string>
+   </property>
+   <widget class="QPushButton" name="btn_close">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>26</y>
+      <width>22</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+	border-image: url(:/Course/course/close-normal.png);
+}
+
+QPushButton:pressed {
+	border-image: url(:/Course/course/close-press.png);
+}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_camera">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>80</y>
+      <width>36</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="baseSize">
+     <size>
+      <width>36</width>
+      <height>20</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QCheckBox:unchecked{
+	border-image: url(:/Course/course/close.png);
+}
+
+QCheckBox:unchecked:hover{
+	border-image: url(:/Course/course/close-hover.png);
+}
+
+QCheckBox:checked{
+	border-image: url(:/Course/course/open.png);
+}
+
+QCheckBox:checked:hover{
+	border-image: url(:/Course/course/open-hover.png);
+}
+
+QCheckBox::indicator {
+	margin:5px;
+    width: 20px;
+	image: none;
+}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="cb_camera">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>125</y>
+      <width>251</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QComboBox {
+    border: 1px solid #DDDDDD;
+}
+
+QComboBox::drop-down {
+	border-style:none;
+}
+
+QComboBox::down-arrow {
+    image: url(:/Course/course/combo-down.png);
+}
+
+QComboBox::down-arrow:on { 
+	image: url(:/Course/course/combo-up.png)
+}</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_preview">
+    <property name="geometry">
+     <rect>
+      <x>26</x>
+      <y>190</y>
+      <width>51</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 11pt &quot;微软雅黑&quot;;
+color: #888888;
+opacity:255;</string>
+    </property>
+    <property name="text">
+     <string>预览</string>
+    </property>
+   </widget>
+   <widget class="QWidgetVideoRender" name="widget_render" native="true">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>190</y>
+      <width>240</width>
+      <height>180</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_mic">
+    <property name="geometry">
+     <rect>
+      <x>26</x>
+      <y>390</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 11pt &quot;微软雅黑&quot;;
+color: #888888;
+opacity:255;</string>
+    </property>
+    <property name="text">
+     <string>启用麦克风</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_mic_2">
+    <property name="geometry">
+     <rect>
+      <x>26</x>
+      <y>440</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 11pt &quot;微软雅黑&quot;;
+color: #888888;
+opacity:255;</string>
+    </property>
+    <property name="text">
+     <string>选择麦克风</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_mic">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>390</y>
+      <width>36</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="baseSize">
+     <size>
+      <width>36</width>
+      <height>20</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QCheckBox:unchecked{
+	border-image: url(:/Course/course/close.png);
+}
+
+QCheckBox:unchecked:hover{
+	border-image: url(:/Course/course/close-hover.png);
+}
+
+QCheckBox:checked{
+	border-image: url(:/Course/course/open.png);
+}
+
+QCheckBox:checked:hover{
+	border-image: url(:/Course/course/open-hover.png);
+}
+
+QCheckBox::indicator {
+	margin:5px;
+    width: 20px;
+	image: none;
+}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="cb_mic">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>440</y>
+      <width>251</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QComboBox {
+    border: 1px solid #DDDDDD;
+}
+
+QComboBox::drop-down {
+	border-style:none;
+}
+
+QComboBox::down-arrow {
+    image: url(:/Course/course/combo-down.png);
+}
+
+QComboBox::down-arrow:on { 
+	image: url(:/Course/course/combo-up.png)
+}</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_mic_3">
+    <property name="geometry">
+     <rect>
+      <x>26</x>
+      <y>495</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 11pt &quot;微软雅黑&quot;;
+color: #888888;
+opacity:255;</string>
+    </property>
+    <property name="text">
+     <string>音量</string>
+    </property>
+   </widget>
+   <widget class="QSlider" name="hsVolume">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>500</y>
+      <width>261</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QSlider::groove:horizontal {
+	background: rgb(136, 136, 136);
+	height: 4px;
+}
+
+QSlider::handle:horizontal {
+	border-radius: 5px;
+	margin: -5px -5px;
+	width:  10px;	
+    background: rgb(0, 110, 255);
+}
+
+QSlider::add-page:horizontal{
+background: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 #bcbcbc, stop:0.25 #bcbcbc, stop:0.5 #bcbcbc, stop:1 #bcbcbc); 
+}
+
+QSlider::sub-page:horizontal {
+background: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgb(0, 110, 255), stop:0.25 rgb(0, 110, 255), stop:0.5 rgb(0, 110, 255), stop:1 rgb(0, 110, 255)); 
+}</string>
+    </property>
+    <property name="minimum">
+     <number>-2</number>
+    </property>
+    <property name="maximum">
+     <number>100</number>
+    </property>
+    <property name="singleStep">
+     <number>5</number>
+    </property>
+    <property name="pageStep">
+     <number>5</number>
+    </property>
+    <property name="value">
+     <number>0</number>
+    </property>
+    <property name="sliderPosition">
+     <number>0</number>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_ok">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>590</y>
+      <width>88</width>
+      <height>33</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>88</width>
+      <height>33</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>64</width>
+      <height>33</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+	border: none;
+	background:  #006eff;
+	color: #ffffff;
+	font: 10pt &quot;Microsoft YaHei&quot;;
+}
+
+QPushButton:hover {
+	background:  #0068f2;
+}
+
+QPushButton:pressed {
+	background:  #0062e5;
+}
+
+QPushButton:disable {
+	border: 1px solid #d5d5d5;
+	color: #bbbbbb;
+	background:  #f2f2f2;
+}</string>
+    </property>
+    <property name="text">
+     <string>确定</string>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_cancel">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>590</y>
+      <width>88</width>
+      <height>33</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>88</width>
+      <height>33</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>88</width>
+      <height>33</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+	border: 1px solid #dddddd;
+	background:  #ffffff;
+	color: #000000;
+	font: 10pt &quot;Microsoft YaHei&quot;;
+}
+
+QPushButton:hover {
+	border: 1px solid #d2d2d2;
+	background:  #f2f2f2;
+}
+
+QPushButton:pressed {
+	border: 1px solid #d2d2d2;
+	background:  #e5e5e5;
+}
+
+QPushButton:disable {
+	border: 1px solid #d5d5d5;
+	color: #bbbbbb;
+	background:  #f2f2f2;
+}</string>
+    </property>
+    <property name="text">
+     <string>取消</string>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_device">
+    <property name="geometry">
+     <rect>
+      <x>26</x>
+      <y>22</y>
+      <width>84</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: bold 16pt &quot;Microsoft YaHei&quot;;
+color: #333333;
+opacity:255;</string>
+    </property>
+    <property name="text">
+     <string>设备检测</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_camera_2">
+    <property name="geometry">
+     <rect>
+      <x>26</x>
+      <y>80</y>
+      <width>75</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 11pt &quot;微软雅黑&quot;;
+color: #888888;
+opacity:255;</string>
+    </property>
+    <property name="text">
+     <string>启用摄像头</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_camera">
+    <property name="geometry">
+     <rect>
+      <x>26</x>
+      <y>130</y>
+      <width>75</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 11pt &quot;微软雅黑&quot;;
+color: #888888;
+opacity:255;</string>
+    </property>
+    <property name="text">
+     <string>选择摄像头</string>
+    </property>
+   </widget>
+   <widget class="QProgressBar" name="volumeBar">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>540</y>
+      <width>261</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QProgressBar{
+	border-style:none;
+}
+
+QProgressBar::Chunk{
+    background-color:#00CC00;
+    width:8px;
+	margin:0.5px;
+}</string>
+    </property>
+    <property name="value">
+     <number>0</number>
+    </property>
+    <property name="textVisible">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_camera_3">
+    <property name="geometry">
+     <rect>
+      <x>26</x>
+      <y>540</y>
+      <width>75</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 11pt &quot;微软雅黑&quot;;
+color: #888888;
+opacity:255;</string>
+    </property>
+    <property name="text">
+     <string>声音检测</string>
+    </property>
+   </widget>
+   <zorder>label_device</zorder>
+   <zorder>label_camera_2</zorder>
+   <zorder>label_camera</zorder>
+   <zorder>btn_close</zorder>
+   <zorder>checkBox_camera</zorder>
+   <zorder>label_preview</zorder>
+   <zorder>label_mic</zorder>
+   <zorder>label_mic_2</zorder>
+   <zorder>checkBox_mic</zorder>
+   <zorder>label_mic_3</zorder>
+   <zorder>hsVolume</zorder>
+   <zorder>btn_ok</zorder>
+   <zorder>btn_cancel</zorder>
+   <zorder>widget_render</zorder>
+   <zorder>cb_camera</zorder>
+   <zorder>cb_mic</zorder>
+   <zorder>volumeBar</zorder>
+   <zorder>label_camera_3</zorder>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QWidgetVideoRender</class>
+   <extends>QWidget</extends>
+   <header>QWidgetVideoRender.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../res/Course.qrc"/>
+ </resources>
+ <connections/>
+</ui>
