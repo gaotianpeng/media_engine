@@ -45,4 +45,5 @@ private:
     std::shared_ptr<AccountService> m_service;
     QSettings m_settings;
     QDialogCourseList m_frontPage;
+    QDialogCourseInfo m_enterRoom;
 };

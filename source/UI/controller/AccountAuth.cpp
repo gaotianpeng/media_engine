@@ -11,12 +11,12 @@ AccountAuth::AccountAuth(QObject *parent)
 	, m_service(std::make_shared<AccountService>(1400042982, 17802))
 	, m_settings("Tencent", "TXCloudEdu")
 	, m_frontPage()
+    , m_enterRoom(m_service)
 {
     // ÇÐ»»Ö÷Ïß³Ì
     qRegisterMetaType<txfunction>("txfunction");
     connect(this, SIGNAL(dispatch(txfunction)), this, SLOT(handle(txfunction)), Qt::QueuedConnection);
     m_service->setCallback(this);
-
 }
 
 AccountAuth::~AccountAuth()
@@ -45,8 +45,8 @@ int AccountAuth::exec(int reEnter)
         QString pwd;
 		wchar_t localid[256] = { 0 };
 		wchar_t localpass[256] = { 0 };
-		GetPrivateProfileString(TEXT("TXCloudEdu"), TEXT("account"), TEXT(""), localid, 256, TEXT("txcloudprofile.ini"));
-		GetPrivateProfileString(TEXT("TXCloudEdu"), TEXT("password"), TEXT(""), localpass, 256, TEXT("txcloudprofile.ini"));
+		GetPrivateProfileString(L"TXCloudEdu", L"account", L"", localid, 256, L"txcloudprofile.ini");
+		GetPrivateProfileString(L"TXCloudEdu", L"password", L"", localpass, 256, L"txcloudprofile.ini");
 		//id.fromStdWString(localid);
 		//pwd.fromStdWString(localpass);
 		if (id.isEmpty())
@@ -88,8 +88,8 @@ int AccountAuth::exec(int reEnter)
 
 		if (NoType != m_frontPage.enterType())
 		{
-			//m_enterRoom.init(m_frontPage.enterType(), m_frontPage.roomId(), m_frontPage.roomName());
-			//m_enterRoom.exec();
+			m_enterRoom.init(m_frontPage.enterType(), m_frontPage.roomId(), m_frontPage.roomName());
+			m_enterRoom.exec();
 		}
 		else
 		{
@@ -253,7 +253,7 @@ void AccountAuth::onReportJoinRoom(int code, const char *desc)
     {
         emit dispatch([this] {
 			emit QDialogProgress::instance().hideAfter(0);
-	        //m_enterRoom.done(0);
+	        m_enterRoom.done(0);
         });
     }
 }
@@ -275,6 +275,7 @@ void AccountAuth::onError()
 {
 	emit dispatch([this] {
 		emit QDialogProgress::instance().hideAfter(0);
+		m_enterRoom.done(0);
 	});
 }
 

@@ -151,6 +151,7 @@ set(me_view_HEADERS
 
 )
 set(me_view_SOURCES
+	view/QDialogCourseInfo.cpp
 	view/QDialogCourseList.cpp
 	view/QDialogDeviceMgr.cpp
 	view/QDialogInvite.cpp
