@@ -4,7 +4,14 @@ project(media_engine CXX)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake")
 
+if(MSVC AND NOT EXISTS "${CMAKE_BINARY_DIR}/ALL_BUILD.vcxproj.user")
+	file(GENERATE
+		OUTPUT "${CMAKE_BINARY_DIR}/ALL_BUILD.vcxproj.user"
+		INPUT "${CMAKE_SOURCE_DIR}/cmake/ALL_BUILD.vcxproj.user.in")
+endif()
+
 message(STATUS "The cmake module path is: " ${CMAKE_MODULE_PATH})
+
 if(MSVC)
     set(CMAKE_C_FLAGS_DEBUG "/DDEBUG=1 /D_DEBUG=1 ${CMAKE_C_FLAGS_DEBUG}")
     set(CMAKE_CXX_FLAGS_DEBUG "/DDEBUG=1 /D_DEBUG=1 ${CMAKE_C_FLAGS_DEBUG}")
