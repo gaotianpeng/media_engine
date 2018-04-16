@@ -6,8 +6,8 @@ int main(int argc, char* argv[])
 {
 	QApplication a(argc, argv);
 
-	MEBasic basic; 
-	basic.show(); 
-    a.exec(); 
-    return 0; 
+	QLabel label("Hello World");
+	label.show(); 
+
+    return a.exec(); 
 }
