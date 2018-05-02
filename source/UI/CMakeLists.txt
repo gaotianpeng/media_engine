@@ -244,6 +244,11 @@ add_executable(UI WIN32
 	${me_UI_HEADERS}
 	${me_QRC_SOURCES})
 
+add_custom_command(TARGET UI
+	POST_BUILD
+	COMMAND editbin /SUBSYSTEM:CONSOLE "$(OUTDIR)$(TargetName).exe"
+	COMMENT "Running SomeCommand")
+
 set(third_LIB avcodec.lib
 	avformat.lib
 	avutil.lib
