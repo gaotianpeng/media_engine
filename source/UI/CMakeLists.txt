@@ -63,9 +63,17 @@ message(STATUS "The me_UI dir is: " ${me_UI})
 
 qt5_wrap_ui(me_UI_HEADERS ${me_UI})
 
+
+
 add_executable(UI WIN32
 	${me_HEADERS}
 	${me_SOURCES}
 	${me_UI})
+
+add_custom_command(TARGET UI
+	POST_BUILD 
+	COMMAND  editbin /SUBSYSTEM:CONSOLE "$(OUTDIR)$(TargetName).exe"
+	COMMENT "Running console window"
+	)
 
 target_link_libraries(UI Qt5::Widgets)
