@@ -1,3 +1,5 @@
 build/*
 install/*
 .vscode/*
+dependency/win32/*
+dependency/win64/*

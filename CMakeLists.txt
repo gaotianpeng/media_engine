@@ -23,9 +23,15 @@ if(MSVC)
     endif()
 endif()
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake;${CMAKE_MODULE_PATH}")
+if(WIN32)
+    if (DepsPath OR DEFINED ENV{DepsPath} OR DEFINED ENV{DepsPath32} OR DEFINED ENV{DepsPath64})
+    else()
+        set(DepsPath "" CACHE PATH "Path to compiled dependencies (e.g. D:/dependencies/win64)")
+        message(WARNING "DepsPath variable is missing.  Please set this variable to specify path to compiled dependencies (e.g. D:/dependencies/win64)")
+    endif()
+endif()
+
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake;${CMAKE_MODULE_PATH};${CMAKE_SOURCE_DIR}/CMake/Modules")
 
 include(UtilityMacros)
 add_subdirectory(source)
-
-
