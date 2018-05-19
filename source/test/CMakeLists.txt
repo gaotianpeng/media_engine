@@ -12,6 +12,8 @@ set(LOG_LIB easyloggingpp.lib )
 set(DEPS_LIB me.lib)
 
 include_directories(${GTEST_INCLUDE_DIRS})
+include_directories(${DepsPath}/include)
+link_directories(${DepsPath}/bin)
 file(GLOB GTEST_SRC *.h *.cpp)
 
 set(TARGET_SRC ${GTEST_SRC})
