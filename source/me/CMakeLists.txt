@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.3)
 add_definitions(-D MATH_EXPORTS)
 
 file(GLOB SOURCE_FILES_H "*.h")
-file(GLOB SOURCE_FILES "*.cpp")
+file(GLOB SOURCE_FILES "*.cc")
 
 set(TARGET_SRC 
     ${SOURCE_FILES}

@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
 add_definitions(-D UTILITY_EXPORTS)
 
 file(GLOB SOURCE_FILES_H "*.h")
-file(GLOB SOURCE_FILES "*.cpp")
+file(GLOB SOURCE_FILES "*.cc")
 
 
 set(TARGET_SRC 

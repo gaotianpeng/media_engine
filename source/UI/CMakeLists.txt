@@ -54,7 +54,7 @@ if(WIN32)
 endif()
 
 file(GLOB me_HEADERS "*.h")
-file(GLOB me_SOURCES "*.cpp")
+file(GLOB me_SOURCES "*.cc")
 
 set(me_UI 
 	forms/MEBasic.ui)

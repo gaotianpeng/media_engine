@@ -7,7 +7,7 @@ find_package(FFmpeg REQUIRED
 	COMPONENTS avcodec avfilter avdevice avutil swscale avformat swresample)
 
 include_directories(${FFMPEG_INCLUDE_DIRS})
-file(GLOB AV_MUX_SRC *.h *.cpp)
+file(GLOB AV_MUX_SRC *.h *.cc)
 
 set(TARGET_SRC ${AV_MUX_SRC})
 
