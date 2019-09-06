@@ -42,7 +42,7 @@ if(NOT Qt5Widgets_FOUND)
 	endif()
 endif()
 
-include_directories(${CMAKE_PREFIX_PATH}/include)
+include_directories(${CMAKE_PREFIX_PATH}/include ${CMAKE_SOURCE_DIR}/source/include)
 message(STATUS ${CMAKE_PREFIX_PATH})
 
 if(WIN32)
@@ -76,4 +76,4 @@ add_custom_command(TARGET UI
 	COMMENT "Running console window"
 	)
 
-target_link_libraries(UI Qt5::Widgets)
+target_link_libraries(UI Qt5::Widgets mediaengine.lib)

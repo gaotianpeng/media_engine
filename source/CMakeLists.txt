@@ -1,6 +1,3 @@
 add_subdirectory(av_mux)
 add_subdirectory(UI)
-add_subdirectory(test)
-add_subdirectory(me)
-add_subdirectory(utility)
-add_subdirectory(video_player)
+add_subdirectory(mediaengine)
