@@ -144,7 +144,8 @@ int main(int argc, char* argv[])
 	//Output bitstream
 	fp_out = fopen(filename_out, "wb");
 	if (!fp_out) {
-		printf("Could not open %s\n", filename_out);
+		printf("Could not open
+			%s\n", filename_out);
 		return -1;
 	}
 

@@ -8,15 +8,19 @@ extern "C"
 #include "libavutil/time.h"
 };
 
-const char *srcFileName = "/home/ubuntu/gaotianpeng/arm_x86_anbox_test/720p.rgb";
-const char *dstFileName = "/home/ubuntu/gaotianpeng/arm_x86_anbox_test/720pp.yuv";
+//const char *srcFileName = "/home/ubuntu/gaotianpeng/arm_x86_anbox_test/720p.rgb";
+//const char *dstFileName = "/home/ubuntu/gaotianpeng/arm_x86_anbox_test/720pp.yuv";
+
+const char *srcFileName = "e:/ffmpeg/720p.rgb";
+const char *dstFileName = "e:/ffmpeg/1280x720.yuv";
+
 using namespace std;
 
 int main(int argc, char* argv[]) {
 	cout << "hello rgb2yuv started!" << endl;
-	const int in_width = 1080;
+	const int in_width = 1280;
 	const int in_height = 720;
-	const int out_width = 1080;
+	const int out_width = 1280;
 	const int out_height = 720;
 
 	FILE *fin = fopen(srcFileName, "rb");
@@ -75,7 +79,6 @@ int main(int argc, char* argv[]) {
 		memcpy(ptr_dst_yuv_buf + (out_width*out_height * 5 >> 2), outbuf[2], out_width*out_height >> 2);
 
 		fwrite(ptr_dst_yuv_buf, 1, write_size, fout);
-		av_usleep(10000);
 	}
 
 	std::cout << "hello rgb2yuv end!" << endl;
