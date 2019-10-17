@@ -53,9 +53,7 @@ int main(int argc, char* argv[]) {
 			break; 
 		}
 		memcpy(in_buf, ptr_src_rgb_buf, readSize);
-		//memcpy(in_img.data, ptr_src_rgb_buf, readSize);
-		cvtColor(in_img, in_img, COLOR_RGB2BGR);
-		cvtColor(in_img, out_img, COLOR_BGR2YUV_I420); 
+		cvtColor(in_img, out_img, COLOR_RGB2YUV_I420);
 		cout << &out_img.data << "-----------------------------------------" <<endl; 
 
 		memcpy(ptr_dst_yuv_buf, out_img.data, writeSize);
