@@ -11,8 +11,8 @@ extern "C"
 //const char *srcFileName = "/home/ubuntu/gaotianpeng/arm_x86_anbox_test/720p.rgb";
 //const char *dstFileName = "/home/ubuntu/gaotianpeng/arm_x86_anbox_test/720pp.yuv";
 
-const char *srcFileName = "e:/ffmpeg/720p.rgb";
-const char *dstFileName = "e:/ffmpeg/1280x720.yuv";
+const char *src_file_name = "e:/ffmpeg/720p.rgb";
+const char *dst_file_name = "e:/ffmpeg/1280x720.yuv";
 
 using namespace std;
 
@@ -23,14 +23,14 @@ int main(int argc, char* argv[]) {
 	const int out_width = 1280;
 	const int out_height = 720;
 
-	FILE *fin = fopen(srcFileName, "rb");
-	FILE *fout = fopen(dstFileName, "wb");
+	FILE *fin = fopen(src_file_name, "rb");
+	FILE *fout = fopen(dst_file_name, "wb");
 	if (fin == NULL ) {
-		fprintf(stderr, "open input file %s error.\n", srcFileName);
+		fprintf(stderr, "open input file %s error.\n", src_file_name);
 		return -1;
 	}
 	if (fout == NULL) {
-		fprintf(stderr, "open output file %s error.\n", dstFileName);
+		fprintf(stderr, "open output file %s error.\n", dst_file_name);
 		return -1;
 	}
 
@@ -65,6 +65,7 @@ int main(int argc, char* argv[]) {
 	int inLinesize[1] = { 3 * in_width};
 
 	bool bExit = false;
+	int i = 0; 
 	while (!bExit) {
 		if ((fread(ptr_src_rgb_buf, 1, read_size, fin) < 0) || (feof(fin))) {
 			bExit = true;
@@ -79,6 +80,8 @@ int main(int argc, char* argv[]) {
 		memcpy(ptr_dst_yuv_buf + (out_width*out_height * 5 >> 2), outbuf[2], out_width*out_height >> 2);
 
 		fwrite(ptr_dst_yuv_buf, 1, write_size, fout);
+		++i; 
+		cout << "frame " << i << endl; 
 	}
 
 	std::cout << "hello rgb2yuv end!" << endl;
