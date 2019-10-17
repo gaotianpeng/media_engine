@@ -8,13 +8,13 @@ extern "C"
 #include "libavutil/time.h"
 };
 
-//const char *srcFileName = "/home/ubuntu/gaotianpeng/arm_x86_anbox_test/720p.rgb";
-//const char *dstFileName = "/home/ubuntu/gaotianpeng/arm_x86_anbox_test/720pp.yuv";
+#include "opencv2/opencv.hpp"
 
 const char *src_file_name = "e:/ffmpeg/720p.rgb";
 const char *dst_file_name = "e:/ffmpeg/1280x720.yuv";
 
 using namespace std;
+using namespace cv; 
 
 int main(int argc, char* argv[]) {
 	cout << "hello rgb2yuv started!" << endl;
@@ -41,7 +41,9 @@ int main(int argc, char* argv[]) {
 	ptr_src_rgb_buf = new uint8_t[in_width * in_height * 3];
 	ptr_dst_yuv_buf = new uint8_t[out_width * out_height * 3 / 2];
 
+
 	uint8_t* inbuf = (uint8_t *)malloc(in_width*in_height*3);
+
 	uint8_t *outbuf[4];
 	int outlinesize[4] = { out_width, out_width / 2, out_width / 2, 0 };
 	outbuf[0] = (uint8_t *)malloc(out_width*out_height);
@@ -66,6 +68,9 @@ int main(int argc, char* argv[]) {
 
 	bool bExit = false;
 	int i = 0; 
+
+	TickMeter time_meter; 
+
 	while (!bExit) {
 		if ((fread(ptr_src_rgb_buf, 1, read_size, fin) < 0) || (feof(fin))) {
 			bExit = true;
@@ -74,7 +79,6 @@ int main(int argc, char* argv[]) {
 
 		memcpy(inbuf, ptr_src_rgb_buf, in_size);
 		sws_scale(img_convert_ctx, inData, inLinesize, 0, in_height, outbuf, outlinesize);
-
 		memcpy(ptr_dst_yuv_buf, outbuf[0], out_width*out_height);
 		memcpy(ptr_dst_yuv_buf + out_width * out_height, outbuf[1], out_width*out_height >> 2);
 		memcpy(ptr_dst_yuv_buf + (out_width*out_height * 5 >> 2), outbuf[2], out_width*out_height >> 2);
