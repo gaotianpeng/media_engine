@@ -13,17 +13,35 @@ extern "C" {
 using namespace std; 
 using namespace std::chrono;
 
+int main_cpu(int argc, char* argv[]);
+int main_gpu(int argc, char* argv[]);
 void encode(AVCodecContext* enc_ctx, AVFrame* frame, AVPacket* pkt,
 	FILE* out_file);
 
 int main(int argc, char* argv[]) {
+	cout << "Please codec: 1. use libx264, 2. use h264_nvenc" << endl; 
+	int num = 1; 
+	cin >> num; 
+	if (num == 1) {
+		return main_cpu(argc, argv); 
+	}
+	else if (num == 2) {
+		return main_gpu(argc, argv); 
+	}
+
+	cout << "Unsupported codec!!!" << endl; 
+	return 0;
+}
+
+int main_cpu(int argc, char* argv[]) {
 	cout << "yuvtoh264 new starting ..." << endl;
 		
 	avcodec_register_all();
 	const char* out_filename = "e:/ffmpeg/720p1.h264"; 
 	const char* in_filename = "e:/ffmpeg/720p.yuv";
+
 	AVCodec* codec = nullptr;
-	codec = avcodec_find_encoder(AV_CODEC_ID_H264);
+	codec = avcodec_find_encoder_by_name("libx264");
 	if (!codec) {
 		cout << "avcodec_find_encoder failed!!!" << endl; 
 		return -1; 
@@ -35,6 +53,7 @@ int main(int argc, char* argv[]) {
 		return -1; 
 	}
 		
+	// 固定码率(Fixed Bit Rate) 
 	cctx->bit_rate = 400000; 
 	cctx->width = 1280; 
 	cctx->height = 720; 
@@ -44,24 +63,32 @@ int main(int argc, char* argv[]) {
 	cctx->framerate.den = 1; 	
 	cctx->gop_size = 10; 
 	cctx->pix_fmt = AV_PIX_FMT_YUV420P; 
-	//if (codec->id == AV_CODEC_ID_H264) {
-	//	av_opt_set(cctx->priv_data, "preset", "ultrafast", 0); 
-	//	av_opt_set(cctx->priv_data, "tune", "zerolatency", 0); 
-	//}
+
+	// 动态码率(Variable Bit Rate)
 
 	int ret = -1;
-	// 设置编码器参数
+	/* 设置编码器参数方法一 */
+	//if (codec->id == AV_CODEC_ID_H264) {
+	//	av_opt_set(cctx->priv_data, "profile", "baseline", 0);
+	//	av_opt_set(cctx->priv_data, "tune", "zerolatency", 0); 
+	//}
+	//ret = avcodec_open2(cctx, codec, nullptr);
+
+	/* 设置编码器参数方法二 */
 	AVDictionary *opt = NULL;
 	ret = av_dict_set(&opt, "profile", "baseline", 0);
-	ret = av_dict_set(&opt, "preset", "ultrafast", 0);
 	ret = av_dict_set(&opt, "tune", "zerolatency", 0);
 	if (ret < 0) {
 		cout << "av_dict_set profile failed!!!" << endl;
 		return ret;
 	}
+	ret = avcodec_open2(cctx, codec, &opt);
 
-	ret = avcodec_open2(cctx, codec, &opt); 
-	//ret = avcodec_open2(cctx, codec, NULL); 
+	/* 设置编码器参数方法三 */
+	//cctx->flags |= AV_CODEC_FLAG_QSCALE;
+	//cctx->flags |= AV_CODEC_FLAG_LOW_DELAY;
+	//ret = avcodec_open2(cctx, codec, NULL);
+
 	if (ret < 0) {
 		cout << "avcodec_open2 failed!!!" << endl; 
 		return ret; 
@@ -120,7 +147,6 @@ int main(int argc, char* argv[]) {
 		pframe->pts = i; 
 		++i; 
 		//cout << "frame i " << i << endl;
-
 		encode(cctx, pframe, pkt, p_outfile);
 	}
 
@@ -133,6 +159,134 @@ int main(int argc, char* argv[]) {
 	avcodec_free_context(&cctx);
 	cout << "yuvtoh264 new ended!" << endl;
 	return 0; 
+}
+
+int main_gpu(int argc, char* argv[]) {
+	cout << "yuvtoh264 new starting ..." << endl;
+
+	avcodec_register_all();
+	const char* out_filename = "e:/ffmpeg/720p1.h264";
+	const char* in_filename = "e:/ffmpeg/720p.yuv";
+
+	AVCodec* codec = nullptr;
+	codec = avcodec_find_encoder_by_name("h264_nvenc");
+	if (!codec) {
+		cout << "avcodec_find_encoder failed!!!" << endl;
+		return -1;
+	}
+	AVCodecContext* cctx = nullptr;
+	cctx = avcodec_alloc_context3(codec);
+	if (!cctx) {
+		cout << "avcodec_alloc_context3 failed!!!" << endl;
+		return -1;
+	}
+
+	// 固定码率(Fixed Bit Rate) 
+	cctx->bit_rate = 400000;
+	cctx->width = 1280;
+	cctx->height = 720;
+	cctx->time_base.num = 1;
+	cctx->time_base.den = 25;
+	cctx->framerate.num = 25;
+	cctx->framerate.den = 1;
+	cctx->gop_size = 10;
+	cctx->pix_fmt = AV_PIX_FMT_YUV420P;
+
+	// 动态码率(Variable Bit Rate)
+
+	int ret = -1;
+	/* 设置编码器参数方法一 */
+	//if (codec->id == AV_CODEC_ID_H264) {
+	//	av_opt_set(cctx->priv_data, "profile", "baseline", 0);
+	//	av_opt_set_int(cctx->priv_data, "delay", 0, 0); 
+	//}
+	//ret = avcodec_open2(cctx, codec, nullptr);
+
+	/* 设置编码器参数方法二 */
+	AVDictionary *opt = NULL;
+	ret = av_dict_set(&opt, "profile", "baseline", 0);
+	ret = av_dict_set_int(&opt, "delay", 0, 0);
+	if (ret < 0) {
+		cout << "av_dict_set profile failed!!!" << endl;
+		return ret;
+	}
+	ret = avcodec_open2(cctx, codec, &opt);
+
+	/* 设置编码器参数方法三 */
+	//cctx->flags |= AV_CODEC_FLAG_QSCALE;
+	//cctx->flags |= AV_CODEC_FLAG_LOW_DELAY;
+	//ret = avcodec_open2(cctx, codec, NULL);
+
+	if (ret < 0) {
+		cout << "avcodec_open2 failed!!!" << endl;
+		return ret;
+	}
+
+	AVFrame* pframe = nullptr;
+	pframe = av_frame_alloc();
+	if (!pframe) {
+		cout << "av_frame_alloc video frame failed!!!" << endl;
+		return -1;
+	}
+	pframe->format = cctx->pix_fmt;
+	pframe->width = cctx->width;
+	pframe->height = cctx->height;
+
+	ret = av_image_alloc(pframe->data, pframe->linesize, pframe->width, pframe->height, cctx->pix_fmt, 16);
+	if (ret < 0) {
+		cout << "av_image_alloc video frame failed!!!" << endl;
+		return -1;
+	}
+
+	FILE* p_infile = fopen(in_filename, "rb");
+	if (!p_infile) {
+		cout << "fopen(in_filename, \"rb\") failed!!!" << endl;
+		return -1;
+	}
+
+	FILE* p_outfile = fopen(out_filename, "wb");
+	if (!p_outfile) {
+		cout << "fopen(out_filename, \"wb\") failed!!!" << endl;
+		return -1;
+	}
+	int i = 0;
+	int y_size = cctx->width * cctx->height;
+
+	AVPacket* pkt = nullptr;
+	pkt = av_packet_alloc();
+	if (!pkt) {
+		exit(1);
+	}
+
+	while (true) {
+		if (fread(pframe->data[0], 1, y_size, p_infile) <= 0 ||
+			fread(pframe->data[1], 1, y_size / 4, p_infile) <= 0 ||
+			fread(pframe->data[2], 1, y_size / 4, p_infile) <= 0) {
+			cout << "Failed to read file data " << endl;
+			break;
+		}
+
+		if (feof(p_infile)) {
+			steady_clock::duration d = steady_clock::now().time_since_epoch();
+
+			break;
+		}
+
+		pframe->pts = i;
+		++i;
+		//cout << "frame i " << i << endl;
+		encode(cctx, pframe, pkt, p_outfile);
+	}
+
+	encode(cctx, NULL, pkt, p_outfile);
+
+	fclose(p_infile);
+	fclose(p_outfile);
+	av_frame_free(&pframe);
+	av_packet_free(&pkt);
+	avcodec_free_context(&cctx);
+	cout << "yuvtoh264 new ended!" << endl;
+	return 0;
 }
 
 static bool bFirstEncode = true; 
