@@ -57,10 +57,7 @@ int main(int argc, char* argv[])
 	int in_w = 1280, in_h = 720;
 	int framenum = 10000000;
 
-
 	avcodec_register_all();
-
-
 	pCodec = avcodec_find_encoder(codec_id);
 	if (!pCodec) {
 		printf("Codec not found\n");
@@ -71,7 +68,7 @@ int main(int argc, char* argv[])
 		printf("Could not allocate video codec context\n");
 		return -1;
 	}
-	pCodecCtx->bit_rate = 400000;
+	pCodecCtx->bit_rate = 1000000;
 	pCodecCtx->width = in_w;
 	pCodecCtx->height = in_h;
 	pCodecCtx->time_base.num = 1;
@@ -118,7 +115,6 @@ int main(int argc, char* argv[])
 		printf("Could not open %s\n", filename_out);
 		return -1;
 	}
-
 
 	y_size = pCodecCtx->width * pCodecCtx->height;
 	//Encode
@@ -180,7 +176,6 @@ int main(int argc, char* argv[])
 	av_free(pCodecCtx);
 	av_freep(&pFrame->data[0]);
 	av_frame_free(&pFrame);
-
 
 	return 0;
 }

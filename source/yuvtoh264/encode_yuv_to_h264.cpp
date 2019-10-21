@@ -1,38 +1,19 @@
 #include <stdio.h>
 
-
 #define __STDC_CONSTANT_MACROS
 
-
-#ifdef _WIN32
-//Windows
 extern "C"
 {
 #include "libavutil/opt.h"
 #include "libavcodec/avcodec.h"
 #include "libavutil/imgutils.h"
 };
-#else
-//Linux...
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-#include <libavutil/opt.h>
-#include <libavcodec/avcodec.h>
-#include <libavutil/imgutils.h>
-#ifdef __cplusplus
-};
-#endif
-#endif
+
 #pragma comment(lib, "avcodec.lib")   
 #pragma comment(lib, "avutil.lib")  
 //test different codec
 #define TEST_H264  1
 #define TEST_HEVC  0
-
-
-
 
 int main(int argc, char* argv[])
 {
@@ -46,27 +27,15 @@ int main(int argc, char* argv[])
 	int y_size;
 	int framecnt = 0;
 
-
 	char filename_in[] = "e:/ffmpeg/720p.yuv";
 
-
-#if TEST_HEVC
-	AVCodecID codec_id = AV_CODEC_ID_HEVC;
-	char filename_out[] = "ds.hevc";
-#else
 	AVCodecID codec_id = AV_CODEC_ID_H264;
-	char filename_out[] = "e:/ffmpeg/yuv-ds.h264";
-#endif
-
-
-
+	char filename_out[] = "e:/ffmpeg/yuv420p.h264";
 
 	int in_w = 1280, in_h = 720;
 	int framenum = 10000000;
 
-
 	avcodec_register_all();
-
 
 	pCodec = avcodec_find_encoder(codec_id);
 	if (!pCodec) {
@@ -78,7 +47,7 @@ int main(int argc, char* argv[])
 		printf("Could not allocate video codec context\n");
 		return -1;
 	}
-	pCodecCtx->bit_rate = 400000;
+	pCodecCtx->bit_rate = 1000000;
 	pCodecCtx->width = in_w;
 	pCodecCtx->height = in_h;
 	pCodecCtx->time_base.num = 1;
@@ -105,7 +74,6 @@ int main(int argc, char* argv[])
 	pFrame->width = pCodecCtx->width;
 	pFrame->height = pCodecCtx->height;
 
-
 	ret = av_image_alloc(pFrame->data, pFrame->linesize, pCodecCtx->width, pCodecCtx->height,
 		pCodecCtx->pix_fmt, 16);
 	if (ret < 0) {
@@ -130,6 +98,7 @@ int main(int argc, char* argv[])
 
 	y_size = pCodecCtx->width * pCodecCtx->height;
 	//Encode
+	bool bFirst = true; 
 	for (i = 0; i < framenum; i++) {
 		av_init_packet(&pkt);
 		pkt.data = NULL;    // packet data will be allocated by the encoder
@@ -144,15 +113,16 @@ int main(int argc, char* argv[])
 			break;
 		}
 
-
 		pFrame->pts = i;
 		/* encode the image */
+
 		ret = avcodec_encode_video2(pCodecCtx, &pkt, pFrame, &got_output);
 		if (ret < 0) {
 			printf("Error encoding frame\n");
 			return -1;
 		}
 		if (got_output) {
+
 			printf("Succeed to encode frame: %5d\tsize:%5d\n", framecnt, pkt.size);
 			framecnt++;
 			fwrite(pkt.data, 1, pkt.size, fp_out);
