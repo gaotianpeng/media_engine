@@ -112,18 +112,17 @@ int main(int argc, char* argv[]) {
 	av_init_packet(&pkt);
 	for ( ; ;) {
 		int len = fread(pcm, 1, readSize, fp);
-		if (len <= 0)break;
-		
-		len = swr_convert(actx, frame->data, frame->nb_samples,
-			data, frame->nb_samples
-		);
-		if (len <= 0)
+		if (len <= 0) {
 			break;
+		}
 
-
-		encode(out_fmt, a_ctx, frame, &pkt); 
-
-
+		len = swr_convert(actx, frame->data, frame->nb_samples,
+			data, frame->nb_samples);
+		if (len <= 0) {
+			break;
+		}
+			
+		encode(out_fmt, a_ctx, frame, &pkt);
 	}
 
 	encode(out_fmt, a_ctx, nullptr, &pkt);
@@ -156,8 +155,9 @@ static void encode(AVFormatContext* out_fmt, AVCodecContext *ctx, AVFrame *frame
 
 	while (ret >= 0) {
 		ret = avcodec_receive_packet(ctx, pkt);
-		if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
+		if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
 			return;
+		}
 		else if (ret < 0) {
 			fprintf(stderr, "Error encoding audio frame\n");
 			exit(1);
