@@ -32,6 +32,7 @@ if(WIN32)
 endif()
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake;${CMAKE_MODULE_PATH};${CMAKE_SOURCE_DIR}/CMake/Modules")
+SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 
 include(UtilityMacros)
 add_subdirectory(source)

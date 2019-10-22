@@ -74,7 +74,9 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 	//打开解码器
-	if (avcodec_open2(ACCtx_p, codec_p, NULL) != 0)
+	int ret = -1; 
+	ret = avcodec_open2(ACCtx_p, codec_p, NULL);
+	if (ret < 0)
 	{
 		cout << "open codec failed" << endl;
 		return -1;
@@ -100,7 +102,7 @@ int main(int argc, char* argv[])
 	char errbuf[256] = { 0 };
 	FILE* fp_yuv = fopen("e:/ffmpeg/720p420.yuv", "wb+");
 
-	int ret = 0;
+	ret = 0;
 	//循环读取帧数据并转换写入
 	while (av_read_frame(AFCtx_p, packet) >= 0)
 	{

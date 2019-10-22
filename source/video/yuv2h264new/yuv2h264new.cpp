@@ -77,9 +77,13 @@ int main_cpu(int argc, char* argv[]) {
 	/* 设置编码器参数方法二 */
 	AVDictionary *opt = NULL;
 	ret = av_dict_set(&opt, "profile", "baseline", 0);
-	ret = av_dict_set(&opt, "tune", "zerolatency", 0);
 	if (ret < 0) {
 		cout << "av_dict_set profile failed!!!" << endl;
+		return ret;
+	}
+	ret = av_dict_set(&opt, "tune", "zerolatency", 0);
+	if (ret < 0) {
+		cout << "av_dict_set tune failed!!!" << endl;
 		return ret;
 	}
 	ret = avcodec_open2(cctx, codec, &opt);

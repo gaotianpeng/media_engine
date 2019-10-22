@@ -6,7 +6,6 @@ using namespace std;
 using namespace std::chrono; 
            
 int main(int argc, char* argv[]) {
-
 	steady_clock::duration d = steady_clock::now().time_since_epoch();
 	minutes min = duration_cast<minutes>(d);
 	seconds sec = duration_cast<seconds>(d);

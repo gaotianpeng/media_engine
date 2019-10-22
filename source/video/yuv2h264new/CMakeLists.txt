@@ -7,10 +7,10 @@ find_package(FFmpeg REQUIRED
 	COMPONENTS avcodec avfilter avdevice avutil swscale avformat swresample)
 
 include_directories(${FFMPEG_INCLUDE_DIRS})
-file(GLOB YUVTOH264NEW_SRC *.h *.cc *.cpp)
+file(GLOB YUV2H264NEW_SRC *.h *.cc *.cpp)
 
-set(TARGET_SRC ${YUVTOH264NEW_SRC})
+set(TARGET_SRC ${YUV2H264NEW_SRC})
 
 set(LIB_INTERNAL_DEPS ${FFMPEG_LIBRARIES})
 
-me_add_executable(yuvtoh264new)
+me_add_executable(yuv2h264new)
