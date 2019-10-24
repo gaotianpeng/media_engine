@@ -1,1 +1,2 @@
 add_subdirectory(pcm2aac)
+add_subdirectory(pcm2opus)

@@ -133,7 +133,7 @@ int main_cpu(int argc, char* argv[]) {
 	if (!pkt) {
 		exit(1);
 	}
-		
+	
 	while (true) {
 		if (fread(pframe->data[0], 1, y_size, p_infile) <= 0 ||		
 			fread(pframe->data[1], 1, y_size/4, p_infile) <= 0 ||	

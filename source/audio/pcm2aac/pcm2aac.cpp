@@ -2,6 +2,7 @@ extern "C" {
 #include "libavformat/avformat.h"
 #include "libswscale/swscale.h"
 #include "libswresample/swresample.h"
+#include "libavutil/avutil.h"
 }
 
 #include <iostream>
@@ -19,9 +20,11 @@ int main(int argc, char* argv[]) {
 	av_register_all();
 	avcodec_register_all();
 
+	//libfdk_aac
 	AVCodec *a_codec = avcodec_find_encoder(AV_CODEC_ID_AAC);
+	//AVCodec *a_codec = avcodec_find_encoder_by_name("libfdk_aac");
 	if (!a_codec) {
-		cout << "avcodec_find_encoder error" << endl;
+		cout << "avcodec_find_encoder_by_name error" << endl;
 		return -1;
 	}
 	AVCodecContext *a_ctx = avcodec_alloc_context3(a_codec);
@@ -38,11 +41,19 @@ int main(int argc, char* argv[]) {
 	a_ctx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
 	a_ctx->thread_count = 4; 
 	AVDictionary *opt = NULL;
-	int ret = av_dict_set(&opt, "profile", "aac_ld", 0);
+	//aac_he, aac_ld
+	int ret = av_dict_set(&opt, "profile", "aac_ld", 1);
 	if (ret < 0) {
-		cout << "av_dict_set(&opt, \"profile\", \"aac_ld\", 0) failed!!!" << endl;
+		cout << "av_dict_set(&opt, \"profile\", \"aac_he\", 0) failed!!!" << endl;
 		return ret;
 	}
+
+	ret = av_dict_set(&opt, "profile", "aac_ld", 0);
+	if (ret < 0) {
+		cout << "av_dict_set(&opt, \"profile\", \"LD\", 0); failed!!!" << endl;
+		return ret;
+	}
+
 	ret = avcodec_open2(a_ctx, a_codec, NULL);
 	if (ret < 0) {
 		cout << "avcodec_open2 error" << endl;
@@ -61,7 +72,6 @@ int main(int argc, char* argv[]) {
 	AVStream *st = avformat_new_stream(out_fmt, NULL);
 	st->codecpar->codec_tag = 0;
 	avcodec_parameters_from_context(st->codecpar, a_ctx);
-
 	av_dump_format(out_fmt, 0, outfile, 1);
 
 	ret = avio_open(&out_fmt->pb, outfile, AVIO_FLAG_WRITE);
@@ -110,18 +120,25 @@ int main(int argc, char* argv[]) {
 
 	AVPacket pkt;
 	av_init_packet(&pkt);
+
+	TickMeter meter; 
 	for ( ; ;) {
 		int len = fread(pcm, 1, readSize, fp);
 		if (len <= 0) {
 			break;
 		}
 
+		meter.reset(); 
+		meter.start(); 
 		len = swr_convert(actx, frame->data, frame->nb_samples,
 			data, frame->nb_samples);
+
 		if (len <= 0) {
 			break;
 		}
-			
+		meter.stop(); 
+		//cout << "swr_convert cost:" << meter.getTimeMilli()<< endl; 
+
 		encode(out_fmt, a_ctx, frame, &pkt);
 	}
 
