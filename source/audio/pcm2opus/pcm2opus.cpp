@@ -9,10 +9,10 @@ extern "C" {
 using namespace std;
 using namespace cv;
 
-int check_sample_fmt(const AVCodec *codec, enum AVSampleFormat sample_fmt); 
-int select_sample_rate(const AVCodec *codec); 
-int select_channel_layout(const AVCodec *codec); 
-void encode(AVFormatContext* out_fmt, AVCodecContext *ctx, AVFrame *frame, AVPacket *pkt);
+static int check_sample_fmt(const AVCodec *codec, enum AVSampleFormat sample_fmt); 
+static int select_sample_rate(const AVCodec *codec); 
+static int select_channel_layout(const AVCodec *codec); 
+static void encode(AVFormatContext* out_fmt, AVCodecContext *ctx, AVFrame *frame, AVPacket *pkt);
 
 int main(int argc, char* argv[]) {
 	cout << "pcm2opus starting..." << endl; 
@@ -24,6 +24,8 @@ int main(int argc, char* argv[]) {
 		cout << "avcodec_find_encoder(AV_CODEC_ID_OPUS) failed!!!" << endl; 
 		return -1; 
 	}
+
+	cout << "libopus encoder name is " << a_codec->name << endl; 
 	
 	AVCodecContext *a_ctx = avcodec_alloc_context3(a_codec);
 	if (!a_ctx) {
@@ -42,7 +44,14 @@ int main(int argc, char* argv[]) {
 	a_ctx->channel_layout = select_channel_layout(a_codec);
 	a_ctx->channels = av_get_channel_layout_nb_channels(a_ctx->channel_layout);
 
-	int ret = avcodec_open2(a_ctx, a_codec, nullptr);
+	AVDictionary *opt = NULL;
+	int ret = av_dict_set(&opt, "application", "lowdelay", 0);
+	if (ret < 0) {
+		cout << "av_dict_set profile failed!!!" << endl;
+		return ret;
+	}
+
+	ret = avcodec_open2(a_ctx, a_codec, &opt);
 	if (ret < 0) {
 		cout << "avcodec_open2(a_ctx, a_codec, nullptr) failed!!!" << endl; 
 		return ret; 
@@ -63,6 +72,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	frame->nb_samples = a_ctx->frame_size;
+	cout << "libopus encoder's frame size is " << a_ctx->frame_size << endl; 
 	frame->format = a_ctx->sample_fmt;
 	frame->channel_layout = a_ctx->channel_layout;
 	//frame->channels = 2; 
@@ -99,23 +109,6 @@ int main(int argc, char* argv[]) {
 		return ret;
 	}
 
-	SwrContext *actx = NULL;
-	actx = swr_alloc_set_opts(actx,
-		a_ctx->channel_layout, a_ctx->sample_fmt, a_ctx->sample_rate,	//输出格式
-		AV_CH_LAYOUT_STEREO, AV_SAMPLE_FMT_S16, 44100,		//输入格式
-		0, 0);
-	if (!actx) {
-		cout << "swr_alloc_set_opts error" << endl;
-		getchar();
-		return -1;
-	}
-	ret = swr_init(actx);
-	if (ret < 0) {
-		cout << "swr_init error" << endl;
-		getchar();
-		return -1;
-	}
-
 	int read_size = frame->nb_samples * 2 * 2; 
 	char *pcm = new char[read_size];
 	uint8_t *data[1];
@@ -133,11 +126,6 @@ int main(int argc, char* argv[]) {
 			break; 
 		}
 
-		//len = swr_convert(actx, frame->data, frame->nb_samples,
-		//	data, frame->nb_samples);
-		//if (len <= 0) {
-		//	break;
-		//}
 		encode(out_fmt, a_ctx, frame, pkt); 
 	}
 
