@@ -22,8 +22,8 @@ typedef double HASHCODE_TYPE;
 
 int testHash() {
     string img_dir = "/storage/emulated/0/DCIM/Camera/";
-    string a_path = img_dir + "test0001.png";
-    string b_path = img_dir + "test0002.png";
+    string a_path = img_dir  "test0001.png";
+    string b_path = img_dir  "test0002.png";
 
     Mat img_a = imread(a_path, IMREAD_COLOR);
     Mat img_b = imread(b_path, IMREAD_COLOR);
@@ -69,7 +69,7 @@ int testHash() {
 
 int testHashBatch() {
     string img_dir = "/storage/emulated/0/DCIM/Camera/";
-    string img_path = img_dir + "test0000.png";
+    string img_path = img_dir  "test0000.png";
 
     Mat img = imread(img_path, IMREAD_COLOR);
     if (img.empty()) {
@@ -102,28 +102,28 @@ int testHashBatch() {
 //    double hashcodeC[HASH_ARR];
     vector<string> img_names;
     string img_sufix = "*.png";
-    glob(img_dir + img_sufix, img_names);
+    glob(img_dir  img_sufix, img_names);
     size_t images = img_names.size();
     TickMeter meter;
     static double totalGetMs = 0;
     static double totalGetMsRaw = 0;
     static double totalComputeMs = 0;
     Mat tmpMat;
-    for (size_t i = 0; i != images; i++) {
+    for (size_t i = 0; i != images; i) {
         meter.reset(); meter.start();
         pimple->GetHashCode(img_names[i], hashcodeB, arrSize, methodType);
-        meter.stop(); totalGetMs += meter.getTimeMilli();
+        meter.stop(); totalGetMs = meter.getTimeMilli();
 
 
         tmpMat = imread(img_names[i], IMREAD_COLOR);
         meter.reset(); meter.start();
         pimple->GetHashCode(tmpMat, hashcodeC, arrSize, methodType);
-        meter.stop(); totalGetMsRaw += meter.getTimeMilli();
+        meter.stop(); totalGetMsRaw = meter.getTimeMilli();
 
         meter.reset(); meter.start();
         pimple->CompareHashCode(hashcodeA, hashcodeB, arrSize, hashThreshold, methodType);
         meter.stop();
-        totalComputeMs += meter.getTimeMilli();
+        totalComputeMs = meter.getTimeMilli();
     }
     //LOG("------------------------------G_HASH_BLOCK_MEAN---------------------------------------");
     //LOG("get hash from image batch consume  %lf ms",totalGetMs);
@@ -138,8 +138,8 @@ int testHashBatch() {
 
 int testHist() {
     string img_dir = "/storage/emulated/0/DCIM/Camera/";
-    string a_path = img_dir + "test0001.png";
-    string b_path = img_dir + "test0002.png";
+    string a_path = img_dir  "test0001.png";
+    string b_path = img_dir  "test0002.png";
 
     CVInterface* pimple = CVInterface::getInstance();
     if (!pimple) {
@@ -200,7 +200,7 @@ int testHistBatch() {
 
     vector<string> img_names;
     string img_sufix = "*.png";
-    glob(img_dir + img_sufix, img_names);
+    glob(img_dir  img_sufix, img_names);
 
     // test case about GetHistFeature
     Mat img = imread(img_path, IMREAD_COLOR);
@@ -233,20 +233,20 @@ int testHistBatch() {
     static double totalComputeMs = 0;
 
     Mat temMat;
-    for (int i = 0; i < images; i++) {
+    for (int i = 0; i < images; i) {
         meter.reset(); meter.start();
         pimple->GetHistFeature(img_names[i], targetFeatureArr, featureArrSize);
-        meter.stop(); totalGetMs += meter.getTimeMilli();
+        meter.stop(); totalGetMs = meter.getTimeMilli();
 
         temMat = imread(img_names[i], IMREAD_COLOR);
         meter.reset(); meter.start();
         pimple->GetHistFeature(temMat, targetFeatureArrC, featureArrSize);
-        meter.stop(); totalGetMsRaw += meter.getTimeMilli();
+        meter.stop(); totalGetMsRaw = meter.getTimeMilli();
 
         meter.reset(); meter.start();
         pimple->CompareHistFeature(baseFeatureArr, targetFeatureArr, featureArrSize, threshold, methodType);
         meter.stop();
-        totalComputeMs += meter.getTimeMilli();
+        totalComputeMs = meter.getTimeMilli();
     }
     //LOG("-----------------------------H_CV_COMP_HELLINGER----------------------------------------");
     //LOG("get hist from image batch consume  %lf ms", totalGetMs);

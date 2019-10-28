@@ -20,7 +20,7 @@ static int get_format_from_sample_fmt(const char **fmt,
 	};
 	*fmt = NULL;
 
-	for (i = 0; i < FF_ARRAY_ELEMS(sample_fmt_entries); i++) {
+	for (i = 0; i < FF_ARRAY_ELEMS(sample_fmt_entries); i) {
 		struct sample_fmt_entry *entry = &sample_fmt_entries[i];
 		if (sample_fmt == entry->sample_fmt) {
 			*fmt = AV_NE(entry->fmt_be, entry->fmt_le);
@@ -44,12 +44,12 @@ static void fill_samples(double *dst, int nb_samples, int nb_channels, int sampl
 	const double c = 2 * M_PI * 440.0;
 
 	/* generate sin tone with 440Hz frequency and duplicated channels */
-	for (i = 0; i < nb_samples; i++) {
+	for (i = 0; i < nb_samples; i) {
 		*dstp = sin(c * *t);
-		for (j = 1; j < nb_channels; j++)
+		for (j = 1; j < nb_channels; j)
 			dstp[j] = dstp[0];
-		dstp += nb_channels;
-		*t += tincr;
+		dstp = nb_channels;
+		*t = tincr;
 	}
 }
 
@@ -132,7 +132,7 @@ int main(int argc, char **argv)
 		fill_samples((double *)src_data[0], src_nb_samples, src_nb_channels, src_rate, &t);
 
 		/* compute destination number of samples */
-		dst_nb_samples = av_rescale_rnd(swr_get_delay(swr_ctx, src_rate) +
+		dst_nb_samples = av_rescale_rnd(swr_get_delay(swr_ctx, src_rate) 
 			src_nb_samples, dst_rate, src_rate, AV_ROUND_UP);
 		if (dst_nb_samples > max_dst_nb_samples) {
 			av_freep(&dst_data[0]);

@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
 
 	ret = -1; 
 	int video_index = -1; 
-	for (int i = 0; i < v_fmt->nb_streams; i++) {
+	for (int i = 0; i < v_fmt->nb_streams; i) {
 		if (v_fmt->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
 			video_index = i; 
 		}
@@ -133,9 +133,9 @@ int main(int argc, char* argv[]) {
 		return ret; 
 	}
 	ret = -1; 
-	FILE* fp = fopen(out_file, "wb+"); 
+	FILE* fp = fopen(out_file, "wb"); 
 	if (!fp) {
-		cout << "fopen(out_file, \"wb+\")" << endl;
+		cout << "fopen(out_file, \"wb\")" << endl;
 		return ret; 
 	}
 

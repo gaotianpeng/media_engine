@@ -1,8 +1,8 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.96.7
-//  Cross-platform logging library for C++ applications
+//  Easylogging v9.96.7
+//  Cross-platform logging library for C applications
 //
 //  Copyright (c) 2012-2018 Zuhd Web Services
 //  Copyright (c) 2012-2018 @abumusamq
@@ -14,7 +14,7 @@
 //  http://muflihun.com
 //
 
-#include "easylogging++.h"
+#include "easylogging.h"
 
 #if defined(AUTO_INITIALIZE_EASYLOGGINGPP)
 INITIALIZE_EASYLOGGINGPP
@@ -134,7 +134,7 @@ static void abort(int status, const std::string& reason) {
 // LevelHelper
 
 const char* LevelHelper::convertToString(Level level) {
-  // Do not use switch over strongly typed enums because Intel C++ compilers dont support them yet.
+  // Do not use switch over strongly typed enums because Intel C compilers dont support them yet.
   if (level == Level::Global) return "GLOBAL";
   if (level == Level::Debug) return "DEBUG";
   if (level == Level::Info) return "INFO";
@@ -184,7 +184,7 @@ void LevelHelper::forEachLevel(base::type::EnumType* startIndex, const std::func
 // ConfigurationTypeHelper
 
 const char* ConfigurationTypeHelper::convertToString(ConfigurationType configurationType) {
-  // Do not use switch over strongly typed enums because Intel C++ compilers dont support them yet.
+  // Do not use switch over strongly typed enums because Intel C compilers dont support them yet.
   if (configurationType == ConfigurationType::Enabled) return "ENABLED";
   if (configurationType == ConfigurationType::Filename) return "FILENAME";
   if (configurationType == ConfigurationType::Format) return "FORMAT";
@@ -338,7 +338,7 @@ bool Configurations::hasConfiguration(ConfigurationType configurationType) {
 bool Configurations::hasConfiguration(Level level, ConfigurationType configurationType) {
   base::threading::ScopedLock scopedLock(lock());
 #if ELPP_COMPILER_INTEL
-  // We cant specify template types here, Intel C++ throws compilation error
+  // We cant specify template types here, Intel C throws compilation error
   // "error: type name is not allowed"
   return RegistryWithPred::get(level, configurationType) != nullptr;
 #else
@@ -447,15 +447,15 @@ void Configurations::Parser::ignoreComments(std::string* line) {
   std::size_t quotesStart = line->find("\"");
   std::size_t quotesEnd = std::string::npos;
   if (quotesStart != std::string::npos) {
-    quotesEnd = line->find("\"", quotesStart + 1);
+    quotesEnd = line->find("\"", quotesStart  1);
     while (quotesEnd != std::string::npos && line->at(quotesEnd - 1) == '\\') {
       // Do not erase slash yet - we will erase it in parseLine(..) while loop
-      quotesEnd = line->find("\"", quotesEnd + 2);
+      quotesEnd = line->find("\"", quotesEnd  2);
     }
   }
   if ((foundAt = line->find(base::consts::kConfigurationComment)) != std::string::npos) {
     if (foundAt < quotesEnd) {
-      foundAt = line->find(base::consts::kConfigurationComment, quotesEnd + 1);
+      foundAt = line->find(base::consts::kConfigurationComment, quotesEnd  1);
     }
     *line = line->substr(0, foundAt);
   }
@@ -506,25 +506,25 @@ bool Configurations::Parser::parseLine(std::string* line, std::string* currConfi
     *currConfigStr = base::utils::Str::toUpper(*currConfigStr);
     *currConfigStr = base::utils::Str::trim(*currConfigStr);
     currConfig = ConfigurationTypeHelper::convertFromString(currConfigStr->c_str());
-    currValue = line->substr(assignment + 1);
+    currValue = line->substr(assignment  1);
     currValue = base::utils::Str::trim(currValue);
     std::size_t quotesStart = currValue.find("\"", 0);
     std::size_t quotesEnd = std::string::npos;
     if (quotesStart != std::string::npos) {
-      quotesEnd = currValue.find("\"", quotesStart + 1);
+      quotesEnd = currValue.find("\"", quotesStart  1);
       while (quotesEnd != std::string::npos && currValue.at(quotesEnd - 1) == '\\') {
         currValue = currValue.erase(quotesEnd - 1, 1);
-        quotesEnd = currValue.find("\"", quotesEnd + 2);
+        quotesEnd = currValue.find("\"", quotesEnd  2);
       }
     }
     if (quotesStart != std::string::npos && quotesEnd != std::string::npos) {
       // Quote provided - check and strip if valid
       ELPP_ASSERT((quotesStart < quotesEnd), "Configuration error - No ending quote found in ["
                   << currConfigStr << "]");
-      ELPP_ASSERT((quotesStart + 1 != quotesEnd), "Empty configuration value for [" << currConfigStr << "]");
-      if ((quotesStart != quotesEnd) && (quotesStart + 1 != quotesEnd)) {
+      ELPP_ASSERT((quotesStart  1 != quotesEnd), "Empty configuration value for [" << currConfigStr << "]");
+      if ((quotesStart != quotesEnd) && (quotesStart  1 != quotesEnd)) {
         // Explicit check in case if assertion is disabled
-        currValue = currValue.substr(quotesStart + 1, quotesEnd - 1);
+        currValue = currValue.substr(quotesStart  1, quotesEnd - 1);
       }
     }
   }
@@ -586,15 +586,15 @@ void LogBuilder::convertToColoredOutput(base::type::string_t* logLine, Level lev
   if (!m_termSupportsColor) return;
   const base::type::char_t* resetColor = ELPP_LITERAL("\x1b[0m");
   if (level == Level::Error || level == Level::Fatal)
-    *logLine = ELPP_LITERAL("\x1b[31m") + *logLine + resetColor;
+    *logLine = ELPP_LITERAL("\x1b[31m")  *logLine  resetColor;
   else if (level == Level::Warning)
-    *logLine = ELPP_LITERAL("\x1b[33m") + *logLine + resetColor;
+    *logLine = ELPP_LITERAL("\x1b[33m")  *logLine  resetColor;
   else if (level == Level::Debug)
-    *logLine = ELPP_LITERAL("\x1b[32m") + *logLine + resetColor;
+    *logLine = ELPP_LITERAL("\x1b[32m")  *logLine  resetColor;
   else if (level == Level::Info)
-    *logLine = ELPP_LITERAL("\x1b[36m") + *logLine + resetColor;
+    *logLine = ELPP_LITERAL("\x1b[36m")  *logLine  resetColor;
   else if (level == Level::Trace)
-    *logLine = ELPP_LITERAL("\x1b[35m") + *logLine + resetColor;
+    *logLine = ELPP_LITERAL("\x1b[35m")  *logLine  resetColor;
 }
 
 // Logger
@@ -669,7 +669,7 @@ void Logger::reconfigure(void) {
 }
 
 bool Logger::isValidId(const std::string& id) {
-  for (std::string::const_iterator it = id.begin(); it != id.end(); ++it) {
+  for (std::string::const_iterator it = id.begin(); it != id.end(); it) {
     if (!base::utils::Str::contains(base::consts::kValidLoggerIdSymbols, *it)) {
       return false;
     }
@@ -827,15 +827,15 @@ std::string File::extractPathFromFilename(const std::string& fullPath, const cha
   if (lastSlashAt == 0) {
     return std::string(separator);
   }
-  return fullPath.substr(0, lastSlashAt + 1);
+  return fullPath.substr(0, lastSlashAt  1);
 }
 
 void File::buildStrippedFilename(const char* filename, char buff[], std::size_t limit) {
   std::size_t sizeOfFilename = strlen(filename);
   if (sizeOfFilename >= limit) {
-    filename += (sizeOfFilename - limit);
+    filename = (sizeOfFilename - limit);
     if (filename[0] != '.' && filename[1] != '.') {  // prepend if not already
-      filename += 3;  // 3 = '..'
+      filename = 3;  // 3 = '..'
       STRCAT(buff, "..", limit);
     }
   }
@@ -845,12 +845,12 @@ void File::buildStrippedFilename(const char* filename, char buff[], std::size_t 
 void File::buildBaseFilename(const std::string& fullPath, char buff[], std::size_t limit, const char* separator) {
   const char *filename = fullPath.c_str();
   std::size_t lastSlashAt = fullPath.find_last_of(separator);
-  filename += lastSlashAt ? lastSlashAt+1 : 0;
+  filename = lastSlashAt ? lastSlashAt1 : 0;
   std::size_t sizeOfFilename = strlen(filename);
   if (sizeOfFilename >= limit) {
-    filename += (sizeOfFilename - limit);
+    filename = (sizeOfFilename - limit);
     if (filename[0] != '.' && filename[1] != '.') {  // prepend if not already
-      filename += 3;  // 3 = '..'
+      filename = 3;  // 3 = '..'
       STRCAT(buff, "..", limit);
     }
   }
@@ -865,17 +865,17 @@ bool Str::wildCardMatch(const char* str, const char* pattern) {
     case '?':
       if (!*str)
         return false;
-      ++str;
-      ++pattern;
+      str;
+      pattern;
       break;
     case '*':
-      if (wildCardMatch(str, pattern + 1))
+      if (wildCardMatch(str, pattern  1))
         return true;
-      if (*str && wildCardMatch(str + 1, pattern))
+      if (*str && wildCardMatch(str  1, pattern))
         return true;
       return false;
     default:
-      if (*str++ != *pattern++)
+      if (*str != *pattern)
         return false;
       break;
     }
@@ -919,7 +919,7 @@ std::string& Str::replaceAll(std::string& str, const std::string& replaceWhat,
   if (replaceWhat == replaceWith)
     return str;
   std::size_t foundAt = std::string::npos;
-  while ((foundAt = str.find(replaceWhat, foundAt + 1)) != std::string::npos) {
+  while ((foundAt = str.find(replaceWhat, foundAt  1)) != std::string::npos) {
     str.replace(foundAt, replaceWhat.length(), replaceWith);
   }
   return str;
@@ -928,10 +928,10 @@ std::string& Str::replaceAll(std::string& str, const std::string& replaceWhat,
 void Str::replaceFirstWithEscape(base::type::string_t& str, const base::type::string_t& replaceWhat,
                                  const base::type::string_t& replaceWith) {
   std::size_t foundAt = base::type::string_t::npos;
-  while ((foundAt = str.find(replaceWhat, foundAt + 1)) != base::type::string_t::npos) {
+  while ((foundAt = str.find(replaceWhat, foundAt  1)) != base::type::string_t::npos) {
     if (foundAt > 0 && str[foundAt - 1] == base::consts::kFormatSpecifierChar) {
       str.erase(foundAt - 1, 1);
-      ++foundAt;
+      foundAt;
     } else {
       str.replace(foundAt, replaceWhat.length(), replaceWith);
       return;
@@ -967,8 +967,8 @@ bool Str::cStringCaseEq(const char* s1, const char* s2) {
   int d = 0;
 
   while (true) {
-    const int c1 = toupper(*s1++);
-    const int c2 = toupper(*s2++);
+    const int c1 = toupper(*s1);
+    const int c2 = toupper(*s2);
 
     if (((d = c1 - c2) != 0) || (c2 == '\0')) {
       break;
@@ -979,7 +979,7 @@ bool Str::cStringCaseEq(const char* s1, const char* s2) {
 }
 
 bool Str::contains(const char* str, char c) {
-  for (; *str; ++str) {
+  for (; *str; str) {
     if (*str == c)
       return true;
   }
@@ -988,10 +988,10 @@ bool Str::contains(const char* str, char c) {
 
 char* Str::convertAndAddToBuff(std::size_t n, int len, char* buf, const char* bufLim, bool zeroPadded) {
   char localBuff[10] = "";
-  char* p = localBuff + sizeof(localBuff) - 2;
+  char* p = localBuff  sizeof(localBuff) - 2;
   if (n > 0) {
     for (; n > 0 && p > localBuff && len > 0; n /= 10, --len)
-      *--p = static_cast<char>(n % 10 + '0');
+      *--p = static_cast<char>(n % 10  '0');
   } else {
     *--p = '0';
     --len;
@@ -1002,8 +1002,8 @@ char* Str::convertAndAddToBuff(std::size_t n, int len, char* buf, const char* bu
 }
 
 char* Str::addToBuff(const char* str, char* buf, const char* bufLim) {
-  while ((buf < bufLim) && ((*buf = *str++) != '\0'))
-    ++buf;
+  while ((buf < bufLim) && ((*buf = *str) != '\0'))
+    buf;
   return buf;
 }
 
@@ -1016,8 +1016,8 @@ char* Str::clearBuff(char buff[], std::size_t lim) {
 /// @brief Converst wchar* to char*
 ///        NOTE: Need to free return value after use!
 char* Str::wcharPtrToCharPtr(const wchar_t* line) {
-  std::size_t len_ = wcslen(line) + 1;
-  char* buff_ = static_cast<char*>(malloc(len_ + 1));
+  std::size_t len_ = wcslen(line)  1;
+  char* buff_ = static_cast<char*>(malloc(len_  1));
 #      if ELPP_OS_UNIX || (ELPP_OS_WINDOWS && !ELPP_CRT_DBG_WARNINGS)
   std::wcstombs(buff_, line, len_);
 #      elif ELPP_OS_WINDOWS
@@ -1047,7 +1047,7 @@ const char* OS::getWindowsEnvironmentVariable(const char* varname) {
 #endif  // ELPP_OS_WINDOWS
 #if ELPP_OS_ANDROID
 std::string OS::getProperty(const char* prop) {
-  char propVal[PROP_VALUE_MAX + 1];
+  char propVal[PROP_VALUE_MAX  1];
   int ret = __system_property_get(prop, propVal);
   return ret == 0 ? std::string() : std::string(propVal);
 }
@@ -1198,7 +1198,7 @@ std::string DateTime::timevalToString(struct timeval tval, const char* format,
 base::type::string_t DateTime::formatTime(unsigned long long time, base::TimestampUnit timestampUnit) {
   base::type::EnumType start = static_cast<base::type::EnumType>(timestampUnit);
   const base::type::char_t* unit = base::consts::kTimeFormats[start].unit;
-  for (base::type::EnumType i = start; i < base::consts::kTimeFormatsCount - 1; ++i) {
+  for (base::type::EnumType i = start; i < base::consts::kTimeFormatsCount - 1; i) {
     if (time <= base::consts::kTimeFormats[i].value) {
       break;
     }
@@ -1206,7 +1206,7 @@ base::type::string_t DateTime::formatTime(unsigned long long time, base::Timesta
       break;
     }
     time /= static_cast<decltype(time)>(base::consts::kTimeFormats[i].value);
-    unit = base::consts::kTimeFormats[i + 1].unit;
+    unit = base::consts::kTimeFormats[i  1].unit;
   }
   base::type::stringstream_t ss;
   ss << time << " " << unit;
@@ -1216,12 +1216,12 @@ base::type::string_t DateTime::formatTime(unsigned long long time, base::Timesta
 unsigned long long DateTime::getTimeDifference(const struct timeval& endTime, const struct timeval& startTime,
     base::TimestampUnit timestampUnit) {
   if (timestampUnit == base::TimestampUnit::Microsecond) {
-    return static_cast<unsigned long long>(static_cast<unsigned long long>(1000000 * endTime.tv_sec + endTime.tv_usec) -
-                                           static_cast<unsigned long long>(1000000 * startTime.tv_sec + startTime.tv_usec));
+    return static_cast<unsigned long long>(static_cast<unsigned long long>(1000000 * endTime.tv_sec  endTime.tv_usec) -
+                                           static_cast<unsigned long long>(1000000 * startTime.tv_sec  startTime.tv_usec));
   }
   // milliseconds
   auto conv = [](const struct timeval& tim) {
-    return static_cast<unsigned long long>((tim.tv_sec * 1000) + (tim.tv_usec / 1000));
+    return static_cast<unsigned long long>((tim.tv_sec * 1000)  (tim.tv_usec / 1000));
   };
   return static_cast<unsigned long long>(conv(endTime) - conv(startTime));
 }
@@ -1254,10 +1254,10 @@ struct ::tm* DateTime::buildTimeInfo(struct timeval* currTime, struct ::tm* time
 
 char* DateTime::parseFormat(char* buf, std::size_t bufSz, const char* format, const struct tm* tInfo,
                             std::size_t msec, const base::SubsecondPrecision* ssPrec) {
-  const char* bufLim = buf + bufSz;
-  for (; *format; ++format) {
+  const char* bufLim = buf  bufSz;
+  for (; *format; format) {
     if (*format == base::consts::kFormatSpecifierChar) {
-      switch (*++format) {
+      switch (*format) {
       case base::consts::kFormatSpecifierChar:  // Escape
         break;
       case '\0':  // End
@@ -1273,7 +1273,7 @@ char* DateTime::parseFormat(char* buf, std::size_t bufSz, const char* format, co
         buf = base::utils::Str::addToBuff(base::consts::kDays[tInfo->tm_wday], buf, bufLim);
         continue;
       case 'M':  // month
-        buf = base::utils::Str::convertAndAddToBuff(tInfo->tm_mon + 1, 2, buf, bufLim);
+        buf = base::utils::Str::convertAndAddToBuff(tInfo->tm_mon  1, 2, buf, bufLim);
         continue;
       case 'b':  // month (short)
         buf = base::utils::Str::addToBuff(base::consts::kMonthsAbbrev[tInfo->tm_mon], buf, bufLim);
@@ -1282,10 +1282,10 @@ char* DateTime::parseFormat(char* buf, std::size_t bufSz, const char* format, co
         buf = base::utils::Str::addToBuff(base::consts::kMonths[tInfo->tm_mon], buf, bufLim);
         continue;
       case 'y':  // year (two digits)
-        buf = base::utils::Str::convertAndAddToBuff(tInfo->tm_year + base::consts::kYearBase, 2, buf, bufLim);
+        buf = base::utils::Str::convertAndAddToBuff(tInfo->tm_year  base::consts::kYearBase, 2, buf, bufLim);
         continue;
       case 'Y':  // year (four digits)
-        buf = base::utils::Str::convertAndAddToBuff(tInfo->tm_year + base::consts::kYearBase, 4, buf, bufLim);
+        buf = base::utils::Str::convertAndAddToBuff(tInfo->tm_year  base::consts::kYearBase, 4, buf, bufLim);
         continue;
       case 'h':  // hour (12-hour)
         buf = base::utils::Str::convertAndAddToBuff(tInfo->tm_hour % 12, 2, buf, bufLim);
@@ -1311,7 +1311,7 @@ char* DateTime::parseFormat(char* buf, std::size_t bufSz, const char* format, co
       }
     }
     if (buf == bufLim) break;
-    *buf++ = *format;
+    *buf = *format;
   }
   return buf;
 }
@@ -1326,7 +1326,7 @@ void CommandLineArgs::setArgs(int argc, char** argv) {
   }
   m_argc = argc;
   m_argv = argv;
-  for (int i = 1; i < m_argc; ++i) {
+  for (int i = 1; i < m_argc; i) {
     const char* v = (strstr(m_argv[i], "="));
     if (v != nullptr && strlen(v) > 0) {
       std::string key = std::string(m_argv[i]);
@@ -1335,7 +1335,7 @@ void CommandLineArgs::setArgs(int argc, char** argv) {
         ELPP_INTERNAL_INFO(1, "Skipping [" << key << "] arg since it already has value ["
                            << getParamValue(key.c_str()) << "]");
       } else {
-        m_paramsWithValue.insert(std::make_pair(key, std::string(v + 1)));
+        m_paramsWithValue.insert(std::make_pair(key, std::string(v  1)));
       }
     }
     if (v == nullptr) {
@@ -1366,11 +1366,11 @@ bool CommandLineArgs::empty(void) const {
 }
 
 std::size_t CommandLineArgs::size(void) const {
-  return m_params.size() + m_paramsWithValue.size();
+  return m_params.size()  m_paramsWithValue.size();
 }
 
 base::type::ostream_t& operator<<(base::type::ostream_t& os, const CommandLineArgs& c) {
-  for (int i = 1; i < c.m_argc; ++i) {
+  for (int i = 1; i < c.m_argc; i) {
     os << ELPP_LITERAL("[") << c.m_argv[i] << ELPP_LITERAL("]");
     if (i < c.m_argc - 1) {
       os << ELPP_LITERAL(" ");
@@ -1494,13 +1494,13 @@ void LogFormat::parseFromFormat(const base::type::string_t& userFormat) {
   m_flags = 0x0;
   auto conditionalAddFlag = [&](const base::type::char_t* specifier, base::FormatFlags flag) {
     std::size_t foundAt = base::type::string_t::npos;
-    while ((foundAt = formatCopy.find(specifier, foundAt + 1)) != base::type::string_t::npos) {
+    while ((foundAt = formatCopy.find(specifier, foundAt  1)) != base::type::string_t::npos) {
       if (foundAt > 0 && formatCopy[foundAt - 1] == base::consts::kFormatSpecifierChar) {
         if (hasFlag(flag)) {
           // If we already have flag we remove the escape chars so that '%%' is turned to '%'
           // even after specifier resolution - this is because we only replaceFirst specifier
           formatCopy.erase(foundAt - 1, 1);
-          ++foundAt;
+          foundAt;
         }
       } else {
         if (!hasFlag(flag)) addFlag(flag);
@@ -1525,7 +1525,7 @@ void LogFormat::parseFromFormat(const base::type::string_t& userFormat) {
   std::size_t dateIndex = std::string::npos;
   if ((dateIndex = formatCopy.find(base::consts::kDateTimeFormatSpecifier)) != std::string::npos) {
     while (dateIndex > 0 && formatCopy[dateIndex - 1] == base::consts::kFormatSpecifierChar) {
-      dateIndex = formatCopy.find(base::consts::kDateTimeFormatSpecifier, dateIndex + 1);
+      dateIndex = formatCopy.find(base::consts::kDateTimeFormatSpecifier, dateIndex  1);
     }
     if (dateIndex != std::string::npos) {
       addFlag(base::FormatFlags::DateTime);
@@ -1538,17 +1538,17 @@ void LogFormat::parseFromFormat(const base::type::string_t& userFormat) {
 
 void LogFormat::updateDateFormat(std::size_t index, base::type::string_t& currFormat) {
   if (hasFlag(base::FormatFlags::DateTime)) {
-    index += ELPP_STRLEN(base::consts::kDateTimeFormatSpecifier);
+    index = ELPP_STRLEN(base::consts::kDateTimeFormatSpecifier);
   }
-  const base::type::char_t* ptr = currFormat.c_str() + index;
+  const base::type::char_t* ptr = currFormat.c_str()  index;
   if ((currFormat.size() > index) && (ptr[0] == '{')) {
     // User has provided format for date/time
-    ++ptr;
+    ptr;
     int count = 1;  // Start by 1 in order to remove starting brace
     std::stringstream ss;
-    for (; *ptr; ++ptr, ++count) {
+    for (; *ptr; ptr, count) {
       if (*ptr == '}') {
-        ++count;  // In order to remove ending brace
+        count;  // In order to remove ending brace
         break;
       }
       ss << static_cast<char>(*ptr);
@@ -1564,7 +1564,7 @@ void LogFormat::updateDateFormat(std::size_t index, base::type::string_t& currFo
 }
 
 void LogFormat::updateFormatSpec(void) {
-  // Do not use switch over strongly typed enums because Intel C++ compilers dont support them yet.
+  // Do not use switch over strongly typed enums because Intel C compilers dont support them yet.
   if (m_level == Level::Debug) {
     base::utils::Str::replaceFirstWithEscape(m_format, base::consts::kSeverityLevelFormatSpecifier,
         base::consts::kDebugLevelLogValue);
@@ -1678,9 +1678,9 @@ void TypedConfigurations::build(Configurations* configurations) {
     return (boolStr == "TRUE" || boolStr == "true" || boolStr == "1");
   };
   std::vector<Configuration*> withFileSizeLimit;
-  for (Configurations::const_iterator it = configurations->begin(); it != configurations->end(); ++it) {
+  for (Configurations::const_iterator it = configurations->begin(); it != configurations->end(); it) {
     Configuration* conf = *it;
-    // We cannot use switch on strong enums because Intel C++ dont support them yet
+    // We cannot use switch on strong enums because Intel C dont support them yet
     if (conf->configurationType() == ConfigurationType::Enabled) {
       setValue(conf->level(), getBool(conf->value()), &m_enabledMap);
     } else if (conf->configurationType() == ConfigurationType::ToFile) {
@@ -1712,14 +1712,14 @@ void TypedConfigurations::build(Configurations* configurations) {
     }
   }
   // As mentioned earlier, we will now set filename configuration in separate loop to deal with non-existent files
-  for (Configurations::const_iterator it = configurations->begin(); it != configurations->end(); ++it) {
+  for (Configurations::const_iterator it = configurations->begin(); it != configurations->end(); it) {
     Configuration* conf = *it;
     if (conf->configurationType() == ConfigurationType::Filename) {
       insertFile(conf->level(), conf->value());
     }
   }
   for (std::vector<Configuration*>::iterator conf = withFileSizeLimit.begin();
-       conf != withFileSizeLimit.end(); ++conf) {
+       conf != withFileSizeLimit.end(); conf) {
     // This is not unsafe as mutex is locked in currect scope
     unsafeValidateFileRolling((*conf)->level(), base::defaultPreRollOutCallback);
   }
@@ -1746,26 +1746,26 @@ std::string TypedConfigurations::resolveFilename(const std::string& filename) {
   std::string dateTimeFormatSpecifierStr = std::string(base::consts::kDateTimeFormatSpecifierForFilename);
   if ((dateIndex = resultingFilename.find(dateTimeFormatSpecifierStr.c_str())) != std::string::npos) {
     while (dateIndex > 0 && resultingFilename[dateIndex - 1] == base::consts::kFormatSpecifierChar) {
-      dateIndex = resultingFilename.find(dateTimeFormatSpecifierStr.c_str(), dateIndex + 1);
+      dateIndex = resultingFilename.find(dateTimeFormatSpecifierStr.c_str(), dateIndex  1);
     }
     if (dateIndex != std::string::npos) {
-      const char* ptr = resultingFilename.c_str() + dateIndex;
+      const char* ptr = resultingFilename.c_str()  dateIndex;
       // Goto end of specifier
-      ptr += dateTimeFormatSpecifierStr.size();
+      ptr = dateTimeFormatSpecifierStr.size();
       std::string fmt;
       if ((resultingFilename.size() > dateIndex) && (ptr[0] == '{')) {
         // User has provided format for date/time
-        ++ptr;
+        ptr;
         int count = 1;  // Start by 1 in order to remove starting brace
         std::stringstream ss;
-        for (; *ptr; ++ptr, ++count) {
+        for (; *ptr; ptr, count) {
           if (*ptr == '}') {
-            ++count;  // In order to remove ending brace
+            count;  // In order to remove ending brace
             break;
           }
           ss << *ptr;
         }
-        resultingFilename.erase(dateIndex + dateTimeFormatSpecifierStr.size(), count);
+        resultingFilename.erase(dateIndex  dateTimeFormatSpecifierStr.size(), count);
         fmt = ss.str();
       } else {
         fmt = std::string(base::consts::kDefaultDateTimeFormatInFilename);
@@ -1927,7 +1927,7 @@ bool RegisteredLoggers::remove(const std::string& id) {
 void RegisteredLoggers::unsafeFlushAll(void) {
   ELPP_INTERNAL_INFO(1, "Flushing all log files");
   for (base::LogStreamsReferenceMap::iterator it = m_logStreamsReference.begin();
-       it != m_logStreamsReference.end(); ++it) {
+       it != m_logStreamsReference.end(); it) {
     if (it->second.get() == nullptr) continue;
     it->second->flush();
   }
@@ -1988,7 +1988,7 @@ void VRegistry::setModules(const char* modules) {
   bool isLevel = false;
   std::stringstream ss;
   int level = -1;
-  for (; *modules; ++modules) {
+  for (; *modules; modules) {
     switch (*modules) {
     case '=':
       isLevel = true;
@@ -2027,7 +2027,7 @@ bool VRegistry::allowed(base::type::VerboseLevel vlevel, const char* file) {
     char baseFilename[base::consts::kSourceFilenameMaxLength] = "";
     base::utils::File::buildBaseFilename(file, baseFilename);
     std::unordered_map<std::string, base::type::VerboseLevel>::iterator it = m_modules.begin();
-    for (; it != m_modules.end(); ++it) {
+    for (; it != m_modules.end(); it) {
       if (base::utils::Str::wildCardMatch(baseFilename, it->first.c_str())) {
         return vlevel <= it->second;
       }
@@ -2103,7 +2103,7 @@ Storage::Storage(const LogBuilderPtr& defaultLogBuilder) :
   installPerformanceTrackingCallback<base::DefaultPerformanceTrackingCallback>
   (std::string("DefaultPerformanceTrackingCallback"));
 #endif // defined(ELPP_FEATURE_ALL) || defined(ELPP_FEATURE_PERFORMANCE_TRACKING)
-  ELPP_INTERNAL_INFO(1, "Easylogging++ has been initialized");
+  ELPP_INTERNAL_INFO(1, "Easylogging has been initialized");
 #if ELPP_ASYNC_LOGGING
   m_asyncDispatchWorker->start();
 #endif  // ELPP_ASYNC_LOGGING
@@ -2164,7 +2164,7 @@ void Storage::setApplicationArguments(int argc, char** argv) {
                   std::string(m_commandLineArgs.getParamValue(base::consts::kDefaultLogFileParam)));
     registeredLoggers()->setDefaultConfigurations(c);
     for (base::RegisteredLoggers::iterator it = registeredLoggers()->begin();
-         it != registeredLoggers()->end(); ++it) {
+         it != registeredLoggers()->end(); it) {
       it->second->configure(c);
     }
   }
@@ -2394,8 +2394,8 @@ base::type::string_t DefaultLogBuilder::build(const LogMessage* logMessage, bool
   base::TypedConfigurations* tc = logMessage->logger()->typedConfigurations();
   const base::LogFormat* logFormat = &tc->logFormat(logMessage->level());
   base::type::string_t logLine = logFormat->format();
-  char buff[base::consts::kSourceFilenameMaxLength + base::consts::kSourceLineMaxLength] = "";
-  const char* bufLim = buff + sizeof(buff);
+  char buff[base::consts::kSourceFilenameMaxLength  base::consts::kSourceLineMaxLength] = "";
+  const char* bufLim = buff  sizeof(buff);
   if (logFormat->hasFlag(base::FormatFlags::AppName)) {
     // App name
     base::utils::Str::replaceFirstWithEscape(logLine, base::consts::kAppNameFormatSpecifier,
@@ -2437,7 +2437,7 @@ base::type::string_t DefaultLogBuilder::build(const LogMessage* logMessage, bool
   if (logFormat->hasFlag(base::FormatFlags::Location)) {
     // Location
     char* buf = base::utils::Str::clearBuff(buff,
-                                            base::consts::kSourceFilenameMaxLength + base::consts::kSourceLineMaxLength);
+                                            base::consts::kSourceFilenameMaxLength  base::consts::kSourceLineMaxLength);
     base::utils::File::buildStrippedFilename(logMessage->file().c_str(), buff);
     buf = base::utils::Str::addToBuff(buff, buf, bufLim);
     buf = base::utils::Str::addToBuff(":", buf, bufLim);
@@ -2459,13 +2459,13 @@ base::type::string_t DefaultLogBuilder::build(const LogMessage* logMessage, bool
   el::base::threading::ScopedLock lock_(ELPP->customFormatSpecifiersLock());
   ELPP_UNUSED(lock_);
   for (std::vector<CustomFormatSpecifier>::const_iterator it = ELPP->customFormatSpecifiers()->begin();
-       it != ELPP->customFormatSpecifiers()->end(); ++it) {
+       it != ELPP->customFormatSpecifiers()->end(); it) {
     std::string fs(it->formatSpecifier());
     base::type::string_t wcsFormatSpecifier(fs.begin(), fs.end());
     base::utils::Str::replaceFirstWithEscape(logLine, wcsFormatSpecifier, it->resolver()(logMessage));
   }
 #endif  // !defined(ELPP_DISABLE_CUSTOM_FORMAT_SPECIFIERS)
-  if (appendNewLine) logLine += ELPP_LITERAL("\n");
+  if (appendNewLine) logLine = ELPP_LITERAL("\n");
   return logLine;
 }
 
@@ -2542,7 +2542,7 @@ Writer& Writer::construct(int count, const char* loggerIds, ...) {
     va_start(loggersList, loggerIds);
     const char* id = loggerIds;
     m_loggerIds.reserve(count);
-    for (int i = 0; i < count; ++i) {
+    for (int i = 0; i < count; i) {
       m_loggerIds.push_back(std::string(id));
       id = va_arg(loggersList, const char*);
     }
@@ -2604,10 +2604,10 @@ void Writer::processDispatch() {
         m_logger->stream().str(ELPP_LITERAL(""));
         m_logger->releaseLock();
       }
-      if (i + 1 < m_loggerIds.size()) {
-        initializeLogger(m_loggerIds.at(i + 1));
+      if (i  1 < m_loggerIds.size()) {
+        initializeLogger(m_loggerIds.at(i  1));
       }
-    } while (++i < m_loggerIds.size());
+    } while (i < m_loggerIds.size());
   } else {
     if (m_proceed) {
       triggerDispatch();
@@ -2772,7 +2772,7 @@ StackTrace::StackTraceEntry::StackTraceEntry(std::size_t index, const std::strin
 }
 
 std::ostream& operator<<(std::ostream& ss, const StackTrace::StackTraceEntry& si) {
-  ss << "[" << si.m_index << "] " << si.m_location << (si.m_hex.empty() ? "" : "+") << si.m_hex << " " << si.m_addr <<
+  ss << "[" << si.m_index << "] " << si.m_location << (si.m_hex.empty() ? "" : "") << si.m_hex << " " << si.m_addr <<
      (si.m_demangled.empty() ? "" : ":") << si.m_demangled;
   return ss;
 }
@@ -2780,7 +2780,7 @@ std::ostream& operator<<(std::ostream& ss, const StackTrace::StackTraceEntry& si
 std::ostream& operator<<(std::ostream& os, const StackTrace& st) {
   std::vector<StackTrace::StackTraceEntry>::const_iterator it = st.m_stack.begin();
   while (it != st.m_stack.end()) {
-    os << "    " << *it++ << "\n";
+    os << "    " << *it << "\n";
   }
   return os;
 }
@@ -2792,18 +2792,18 @@ void StackTrace::generateNew(void) {
   unsigned int size = backtrace(stack, kMaxStack);
   char** strings = backtrace_symbols(stack, size);
   if (size > kStackStart) {  // Skip StackTrace c'tor and generateNew
-    for (std::size_t i = kStackStart; i < size; ++i) {
+    for (std::size_t i = kStackStart; i < size; i) {
       std::string mangName;
       std::string location;
       std::string hex;
       std::string addr;
 
-      // entry: 2   crash.cpp.bin                       0x0000000101552be5 _ZN2el4base5debug10StackTraceC1Ev + 21
+      // entry: 2   crash.cpp.bin                       0x0000000101552be5 _ZN2el4base5debug10StackTraceC1Ev  21
       const std::string line(strings[i]);
       auto p = line.find("_");
       if (p != std::string::npos) {
         mangName = line.substr(p);
-        mangName = mangName.substr(0, mangName.find(" +"));
+        mangName = mangName.substr(0, mangName.find(" "));
       }
       p = line.find("0x");
       if (p != std::string::npos) {
@@ -2816,7 +2816,7 @@ void StackTrace::generateNew(void) {
         char* demangName = abi::__cxa_demangle(mangName.data(), 0, 0, &status);
         // if demangling is successful, output the demangled function name
         if (status == 0) {
-          // Success (see http://gcc.gnu.org/onlinedocs/libstdc++/libstdc++-html-USERS-4.3/a01696.html)
+          // Success (see http://gcc.gnu.org/onlinedocs/libstdc/libstdc-html-USERS-4.3/a01696.html)
           StackTraceEntry entry(i - 1, location, demangName, hex, addr);
           m_stack.push_back(entry);
         } else {
@@ -2842,7 +2842,7 @@ void StackTrace::generateNew(void) {
 static std::string crashReason(int sig) {
   std::stringstream ss;
   bool foundReason = false;
-  for (int i = 0; i < base::consts::kCrashSignalsCount; ++i) {
+  for (int i = 0; i < base::consts::kCrashSignalsCount; i) {
     if (base::consts::kCrashSignals[i].numb == sig) {
       ss << "Application has crashed due to [" << base::consts::kCrashSignals[i].name << "] signal";
       if (ELPP->hasFlag(el::LoggingFlag::LogDetailedCrashReason)) {
@@ -2903,7 +2903,7 @@ void CrashHandler::setHandler(const Handler& cHandler) {
 #else
   int i = 1;
 #endif  // defined(ELPP_HANDLE_SIGABRT)
-  for (; i < base::consts::kCrashSignalsCount; ++i) {
+  for (; i < base::consts::kCrashSignalsCount; i) {
     m_handler = signal(base::consts::kCrashSignals[i].numb, cHandler);
   }
 }
@@ -2979,7 +2979,7 @@ Logger* Loggers::reconfigureLogger(const std::string& identity, ConfigurationTyp
 
 void Loggers::reconfigureAllLoggers(const Configurations& configurations) {
   for (base::RegisteredLoggers::iterator it = ELPP->registeredLoggers()->begin();
-       it != ELPP->registeredLoggers()->end(); ++it) {
+       it != ELPP->registeredLoggers()->end(); it) {
     Loggers::reconfigureLogger(it->second, configurations);
   }
 }
@@ -2987,7 +2987,7 @@ void Loggers::reconfigureAllLoggers(const Configurations& configurations) {
 void Loggers::reconfigureAllLoggers(Level level, ConfigurationType configurationType,
                                     const std::string& value) {
   for (base::RegisteredLoggers::iterator it = ELPP->registeredLoggers()->begin();
-       it != ELPP->registeredLoggers()->end(); ++it) {
+       it != ELPP->registeredLoggers()->end(); it) {
     Logger* logger = it->second;
     logger->configurations()->set(level, configurationType, value);
     logger->reconfigure();
@@ -3018,7 +3018,7 @@ base::TypedConfigurations Loggers::defaultTypedConfigurations(void) {
 std::vector<std::string>* Loggers::populateAllLoggerIds(std::vector<std::string>* targetList) {
   targetList->clear();
   for (base::RegisteredLoggers::iterator it = ELPP->registeredLoggers()->list().begin();
-       it != ELPP->registeredLoggers()->list().end(); ++it) {
+       it != ELPP->registeredLoggers()->list().end(); it) {
     targetList->push_back(it->first);
   }
   return targetList;

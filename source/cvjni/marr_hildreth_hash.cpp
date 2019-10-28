@@ -15,17 +15,17 @@ void getMHKernel(float alpha, float level, cv::Mat &kernel)
     int const sigma = static_cast<int>(4*std::pow(alpha,level));
 
     float const ratio = std::pow(alpha, -level);
-    kernel.create(2*sigma+1, 2*sigma+1, CV_32F);
-    for(int row = 0; row != kernel.rows; ++row)
+    kernel.create(2*sigma1, 2*sigma1, CV_32F);
+    for(int row = 0; row != kernel.rows; row)
     {
         float const ydiff = static_cast<float>(row - sigma);
         float const ypos = ratio * ydiff;
         float const yposPow2 = ypos * ypos;
         float *kPtr = kernel.ptr<float>(row);
-        for(int col = 0; col != kernel.cols; ++col)
+        for(int col = 0; col != kernel.cols; col)
         {
             float const xpos = ratio * static_cast<float>((col - sigma));
-            float const a = xpos * xpos + yposPow2;
+            float const a = xpos * xpos  yposPow2;
             kPtr[col] = (2-a)*std::exp(a/2);
         }
     }
@@ -36,11 +36,11 @@ void fillBlocks(cv::Mat const &freImg, cv::Mat &blocks)
     //TODO : use forEach may provide better speed, however,
     //it is quite tedious to apply without lambda
     blocks.setTo(0);
-    for(int row = 0; row != blocks.rows; ++row)
+    for(int row = 0; row != blocks.rows; row)
     {
         float *bptr = blocks.ptr<float>(row);
         int const rOffset = row*16;
-        for(int col = 0; col != blocks.cols; ++col)
+        for(int col = 0; col != blocks.cols; col)
         {
             cv::Rect const roi(rOffset,col*16,16,16);
             bptr[col] =
@@ -55,25 +55,25 @@ void createHash(cv::Mat const &blocks, cv::Mat &hash)
     int bit_index = 0;
     uchar hashbyte = 0;
     uchar *hashPtr = hash.ptr<uchar>(0);
-    for (int row=0; row < 29; row += 4)
+    for (int row=0; row < 29; row = 4)
     {
-        for (int col=0; col < 29; col += 4)
+        for (int col=0; col < 29; col = 4)
         {
             cv::Rect const roi(col,row,3,3);
             cv::Mat const blockROI = blocks(roi);
             float const avg =
                     static_cast<float>(cv::sum(blockROI)[0]/9.0);
-            for(int i = 0; i != blockROI.rows; ++i)
+            for(int i = 0; i != blockROI.rows; i)
             {
                 float const *bptr = blockROI.ptr<float>(i);
-                for(int j = 0; j != blockROI.cols; ++j)
+                for(int j = 0; j != blockROI.cols; j)
                 {
                     hashbyte <<= 1;
                     if (bptr[j] > avg)
                     {
                         hashbyte |= 0x01;
                     }
-                    ++bit_index;
+                    bit_index;
                     if ((bit_index%8) == 0)
                     {
                         hash_index = (bit_index/8) - 1;

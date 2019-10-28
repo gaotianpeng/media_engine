@@ -150,7 +150,7 @@ static int check_sample_fmt(const AVCodec *codec, enum AVSampleFormat sample_fmt
 	while (*p != AV_SAMPLE_FMT_NONE) {
 		if (*p == sample_fmt)
 			return 1;
-		p++;
+		p;
 	}
 	return 0;
 }
@@ -166,7 +166,7 @@ static int select_sample_rate(const AVCodec *codec) {
 	while (*p) {
 		if (!best_samplerate || abs(44100 - *p) < abs(44100 - best_samplerate))
 			best_samplerate = *p;
-		p++;
+		p;
 	}
 	return best_samplerate;
 }
@@ -187,7 +187,7 @@ static int select_channel_layout(const AVCodec *codec) {
 			best_ch_layout = *p;
 			best_nb_channels = nb_channels;
 		}
-		p++;
+		p;
 	}
 	return best_ch_layout;
 }

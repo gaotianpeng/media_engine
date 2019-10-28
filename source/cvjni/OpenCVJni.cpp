@@ -4,7 +4,7 @@
 #include <iostream>
 #include "cvinterface.h"
 #include "com_opencv_OpenCVJni.h"
-#include "easylogging++.h"
+#include "easylogging.h"
 
 INITIALIZE_EASYLOGGINGPP
 
@@ -22,7 +22,7 @@ extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved)
 
 JNIEXPORT jstring JNICALL Java_com_opencv_OpenCVJni_stringFromJNI
   (JNIEnv *env, jclass) {
-        std::string hello = "Hello from C++1111";
+        std::string hello = "Hello from C1111";
 		LOG(INFO) << "My first info log using default logger";
 		return env->NewStringUTF(hello.c_str());
 }
@@ -218,9 +218,9 @@ JNIEXPORT void JNICALL Java_com_opencv_OpenCVJni_printHistFeature
 	}
 	//LOG("hist feature is:");
 	float* p = featureBuf;
-	for (int i = 0; i < arrSize; i++) {
+	for (int i = 0; i < arrSize; i) {
 		//LOG("%f, ", *p);
-		p++;
+		p;
 	}
 	//LOG("\n");
 	env->ReleaseFloatArrayElements(feature, featureBuf, JNI_COMMIT);
@@ -238,10 +238,10 @@ JNIEXPORT void JNICALL Java_com_opencv_OpenCVJni_printHashCodeBype
 	//LOG("color moment hash code is:");
 	unsigned char* p = static_cast<unsigned char*>(hashcodeBuf);
 	short temVal = 0;
-	for (int i = 0; i < arrSize; i++) {
+	for (int i = 0; i < arrSize; i) {
 		temVal = *p;
 		//LOG("%d, ", temVal);
-		p++;
+		p;
 	}
 	//LOG("\n");
 
@@ -259,9 +259,9 @@ JNIEXPORT void JNICALL Java_com_opencv_OpenCVJni_printHashCodeDouble
 	}
 	//LOG("hash code is:");
 	double*p = hashcodeBuf;
-	for (int i = 0; i < arrSize; i++) {
+	for (int i = 0; i < arrSize; i) {
 		//LOG("%lf, ", *p);
-		p++;
+		p;
 	}
 	//LOG("\n");
 

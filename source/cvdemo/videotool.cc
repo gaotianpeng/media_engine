@@ -31,7 +31,7 @@ void VideoTool::StreamToImages( std::string url,
 			break; 
 		}
 		std::stringstream ss; 
-		ss << outpath << outprefix <<std::setfill('0') << std::setw(4) << imgidx++ << ".png";
+		ss << outpath << outprefix <<std::setfill('0') << std::setw(4) << imgidx << ".png";
 		imwrite(ss.str(), frame);
 		std::cout << ss.str() << std::endl; 
 		cv::waitKey(delayms); 

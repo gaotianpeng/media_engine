@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
 
 		memcpy(ptr_dst_yuv_buf, out_img.data, writeSize);
 		fwrite(ptr_dst_yuv_buf, 1, writeSize, file_out); 
-		++i; 
+		i; 
 		cout << "frame " << i << endl;
 	}
 

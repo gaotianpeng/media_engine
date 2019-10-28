@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
 
 	y_size = pCodecCtx->width * pCodecCtx->height;
 	//Encode
-	for (i = 0; i < framenum; i++) {
+	for (i = 0; i < framenum; i) {
 		av_init_packet(&pkt);
 		pkt.data = NULL;    // packet data will be allocated by the encoder
 		pkt.size = 0;
@@ -151,13 +151,13 @@ int main(int argc, char* argv[])
 		}
 		if (got_output) {
 			printf("Succeed to encode frame: %5d\tsize:%5d\n", framecnt, pkt.size);
-			framecnt++;
+			framecnt;
 			fwrite(pkt.data, 1, pkt.size, fp_out);
 			av_free_packet(&pkt);
 		}
 	}
 	//Flush Encoder
-	for (got_output = 1; got_output; i++) {
+	for (got_output = 1; got_output; i) {
 		ret = avcodec_encode_video2(pCodecCtx, &pkt, NULL, &got_output);
 		if (ret < 0) {
 			printf("Error encoding frame\n");

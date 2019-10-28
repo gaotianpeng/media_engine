@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
 		return -1;
 	}
 	av_dump_format(AFCtx_p, -1, path, 0);
-	for (int i = 0; i < AFCtx_p->nb_streams; i++) {
+	for (int i = 0; i < AFCtx_p->nb_streams; i) {
 		if (AFCtx_p->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
 			videoindex = i;
 		}
@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
 	av_image_fill_arrays(pFrameYUV444->data, pFrameYUV444->linesize,
 		buf, AV_PIX_FMT_YUV444P, ACCtx_p->width, ACCtx_p->height, 1);
 	char errbuf[256] = { 0 };
-	FILE* fp_yuv = fopen("e:/ffmpeg/720p444.yuv", "wb+");
+	FILE* fp_yuv = fopen("e:/ffmpeg/720p444.yuv", "wb");
 
 	int ret = 0;
 	//循环读取帧数据并转换写入

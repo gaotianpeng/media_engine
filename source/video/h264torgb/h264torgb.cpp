@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 	av_dump_format(AFCtx_p, -1, path, 0);
 
 	//打开视频并且获取了视频流，设置视频索引默认值
-	for (int i = 0; i < AFCtx_p->nb_streams; i++)
+	for (int i = 0; i < AFCtx_p->nb_streams; i)
 	{
 		if (AFCtx_p->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO)
 		{
@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
 	av_image_fill_arrays(pFramergb->data, pFramergb->linesize,
 		buf, AV_PIX_FMT_RGB24, ACCtx_p->width, ACCtx_p->height, 1);
 	char errbuf[256] = { 0 };
-	FILE* fp_rgb = fopen("e:/ffmpeg/720p.rgb", "wb+");
+	FILE* fp_rgb = fopen("e:/ffmpeg/720p.rgb", "wb");
 
 	int ret = 0;
 	//循环读取帧数据并转换写入

@@ -76,7 +76,7 @@ static error global_error = { NULL, 0 };
 
 CJSON_PUBLIC(const char *) cJSON_GetErrorPtr(void)
 {
-    return (const char*) (global_error.json + global_error.position);
+    return (const char*) (global_error.json  global_error.position);
 }
 
 CJSON_PUBLIC(char *) cJSON_GetStringValue(cJSON *item) {
@@ -113,7 +113,7 @@ static int case_insensitive_strcmp(const unsigned char *string1, const unsigned 
         return 0;
     }
 
-    for(; tolower(*string1) == tolower(*string2); (void)string1++, string2++)
+    for(; tolower(*string1) == tolower(*string2); (void)string1, string2)
     {
         if (*string1 == '\0')
         {
@@ -166,7 +166,7 @@ static unsigned char* cJSON_strdup(const unsigned char* string, const internal_h
         return NULL;
     }
 
-    length = strlen((const char*)string) + sizeof("");
+    length = strlen((const char*)string)  sizeof("");
     copy = (unsigned char*)hooks->allocate(length);
     if (copy == NULL)
     {
@@ -265,12 +265,12 @@ typedef struct
 } parse_buffer;
 
 /* check if the given size is left to read in a given parse buffer (starting with 1) */
-#define can_read(buffer, size) ((buffer != NULL) && (((buffer)->offset + size) <= (buffer)->length))
+#define can_read(buffer, size) ((buffer != NULL) && (((buffer)->offset  size) <= (buffer)->length))
 /* check if the buffer can be accessed at the given index (starting with 0) */
-#define can_access_at_index(buffer, index) ((buffer != NULL) && (((buffer)->offset + index) < (buffer)->length))
+#define can_access_at_index(buffer, index) ((buffer != NULL) && (((buffer)->offset  index) < (buffer)->length))
 #define cannot_access_at_index(buffer, index) (!can_access_at_index(buffer, index))
 /* get a pointer to the buffer at the position */
-#define buffer_at_offset(buffer) ((buffer)->content + (buffer)->offset)
+#define buffer_at_offset(buffer) ((buffer)->content  (buffer)->offset)
 
 /* Parse the input text to generate a number, and populate the result into item. */
 static cJSON_bool parse_number(cJSON * const item, parse_buffer * const input_buffer)
@@ -289,7 +289,7 @@ static cJSON_bool parse_number(cJSON * const item, parse_buffer * const input_bu
     /* copy the number into a temporary buffer and replace '.' with the decimal point
      * of the current locale (for strtod)
      * This also takes care of '\0' not necessarily being available for marking the end of the input */
-    for (i = 0; (i < (sizeof(number_c_string) - 1)) && can_access_at_index(input_buffer, i); i++)
+    for (i = 0; (i < (sizeof(number_c_string) - 1)) && can_access_at_index(input_buffer, i); i)
     {
         switch (buffer_at_offset(input_buffer)[i])
         {
@@ -303,7 +303,7 @@ static cJSON_bool parse_number(cJSON * const item, parse_buffer * const input_bu
             case '7':
             case '8':
             case '9':
-            case '+':
+            case '':
             case '-':
             case 'e':
             case 'E':
@@ -345,7 +345,7 @@ loop_end:
 
     item->type = cJSON_Number;
 
-    input_buffer->offset += (size_t)(after_end - number_c_string);
+    input_buffer->offset = (size_t)(after_end - number_c_string);
     return true;
 }
 
@@ -402,10 +402,10 @@ static unsigned char* ensure(printbuffer * const p, size_t needed)
         return NULL;
     }
 
-    needed += p->offset + 1;
+    needed = p->offset  1;
     if (needed <= p->length)
     {
-        return p->buffer + p->offset;
+        return p->buffer  p->offset;
     }
 
     if (p->noalloc) {
@@ -457,14 +457,14 @@ static unsigned char* ensure(printbuffer * const p, size_t needed)
         }
         if (newbuffer)
         {
-            memcpy(newbuffer, p->buffer, p->offset + 1);
+            memcpy(newbuffer, p->buffer, p->offset  1);
         }
         p->hooks.deallocate(p->buffer);
     }
     p->length = newsize;
     p->buffer = newbuffer;
 
-    return newbuffer + p->offset;
+    return newbuffer  p->offset;
 }
 
 /* calculate the new length of the string in a printbuffer and update the offset */
@@ -475,9 +475,9 @@ static void update_offset(printbuffer * const buffer)
     {
         return;
     }
-    buffer_pointer = buffer->buffer + buffer->offset;
+    buffer_pointer = buffer->buffer  buffer->offset;
 
-    buffer->offset += strlen((const char*)buffer_pointer);
+    buffer->offset = strlen((const char*)buffer_pointer);
 }
 
 /* Render the number nicely from the given item into a string. */
@@ -521,7 +521,7 @@ static cJSON_bool print_number(const cJSON * const item, printbuffer * const out
     }
 
     /* reserve appropriate space in the output */
-    output_pointer = ensure(output_buffer, (size_t)length + sizeof(""));
+    output_pointer = ensure(output_buffer, (size_t)length  sizeof(""));
     if (output_pointer == NULL)
     {
         return false;
@@ -529,7 +529,7 @@ static cJSON_bool print_number(const cJSON * const item, printbuffer * const out
 
     /* copy the printed number to the output and replace locale
      * dependent decimal point with '.' */
-    for (i = 0; i < ((size_t)length); i++)
+    for (i = 0; i < ((size_t)length); i)
     {
         if (number_buffer[i] == decimal_point)
         {
@@ -541,7 +541,7 @@ static cJSON_bool print_number(const cJSON * const item, printbuffer * const out
     }
     output_pointer[i] = '\0';
 
-    output_buffer->offset += (size_t)length;
+    output_buffer->offset = (size_t)length;
 
     return true;
 }
@@ -552,20 +552,20 @@ static unsigned parse_hex4(const unsigned char * const input)
     unsigned int h = 0;
     size_t i = 0;
 
-    for (i = 0; i < 4; i++)
+    for (i = 0; i < 4; i)
     {
         /* parse digit */
         if ((input[i] >= '0') && (input[i] <= '9'))
         {
-            h += (unsigned int) input[i] - '0';
+            h = (unsigned int) input[i] - '0';
         }
         else if ((input[i] >= 'A') && (input[i] <= 'F'))
         {
-            h += (unsigned int) 10 + input[i] - 'A';
+            h = (unsigned int) 10  input[i] - 'A';
         }
         else if ((input[i] >= 'a') && (input[i] <= 'f'))
         {
-            h += (unsigned int) 10 + input[i] - 'a';
+            h = (unsigned int) 10  input[i] - 'a';
         }
         else /* invalid */
         {
@@ -601,7 +601,7 @@ static unsigned char utf16_literal_to_utf8(const unsigned char * const input_poi
     }
 
     /* get the first utf16 sequence */
-    first_code = parse_hex4(first_sequence + 2);
+    first_code = parse_hex4(first_sequence  2);
 
     /* check that the code is valid */
     if (((first_code >= 0xDC00) && (first_code <= 0xDFFF)))
@@ -612,7 +612,7 @@ static unsigned char utf16_literal_to_utf8(const unsigned char * const input_poi
     /* UTF16 surrogate pair */
     if ((first_code >= 0xD800) && (first_code <= 0xDBFF))
     {
-        const unsigned char *second_sequence = first_sequence + 6;
+        const unsigned char *second_sequence = first_sequence  6;
         unsigned int second_code = 0;
         sequence_length = 12; /* \uXXXX\uXXXX */
 
@@ -629,7 +629,7 @@ static unsigned char utf16_literal_to_utf8(const unsigned char * const input_poi
         }
 
         /* get the second utf16 sequence */
-        second_code = parse_hex4(second_sequence + 2);
+        second_code = parse_hex4(second_sequence  2);
         /* check that the code is valid */
         if ((second_code < 0xDC00) || (second_code > 0xDFFF))
         {
@@ -639,7 +639,7 @@ static unsigned char utf16_literal_to_utf8(const unsigned char * const input_poi
 
 
         /* calculate the unicode codepoint from the surrogate pair */
-        codepoint = 0x10000 + (((first_code & 0x3FF) << 10) | (second_code & 0x3FF));
+        codepoint = 0x10000  (((first_code & 0x3FF) << 10) | (second_code & 0x3FF));
     }
     else
     {
@@ -696,7 +696,7 @@ static unsigned char utf16_literal_to_utf8(const unsigned char * const input_poi
         (*output_pointer)[0] = (unsigned char)(codepoint & 0x7F);
     }
 
-    *output_pointer += utf8_length;
+    *output_pointer = utf8_length;
 
     return sequence_length;
 
@@ -707,8 +707,8 @@ fail:
 /* Parse the input text into an unescaped cinput, and populate item. */
 static cJSON_bool parse_string(cJSON * const item, parse_buffer * const input_buffer)
 {
-    const unsigned char *input_pointer = buffer_at_offset(input_buffer) + 1;
-    const unsigned char *input_end = buffer_at_offset(input_buffer) + 1;
+    const unsigned char *input_pointer = buffer_at_offset(input_buffer)  1;
+    const unsigned char *input_end = buffer_at_offset(input_buffer)  1;
     unsigned char *output_pointer = NULL;
     unsigned char *output = NULL;
 
@@ -727,15 +727,15 @@ static cJSON_bool parse_string(cJSON * const item, parse_buffer * const input_bu
             /* is escape sequence */
             if (input_end[0] == '\\')
             {
-                if ((size_t)(input_end + 1 - input_buffer->content) >= input_buffer->length)
+                if ((size_t)(input_end  1 - input_buffer->content) >= input_buffer->length)
                 {
                     /* prevent buffer overflow when last input character is a backslash */
                     goto fail;
                 }
-                skipped_bytes++;
-                input_end++;
+                skipped_bytes;
+                input_end;
             }
-            input_end++;
+            input_end;
         }
         if (((size_t)(input_end - input_buffer->content) >= input_buffer->length) || (*input_end != '\"'))
         {
@@ -744,7 +744,7 @@ static cJSON_bool parse_string(cJSON * const item, parse_buffer * const input_bu
 
         /* This is at most how much we need for the output */
         allocation_length = (size_t) (input_end - buffer_at_offset(input_buffer)) - skipped_bytes;
-        output = (unsigned char*)input_buffer->hooks.allocate(allocation_length + sizeof(""));
+        output = (unsigned char*)input_buffer->hooks.allocate(allocation_length  sizeof(""));
         if (output == NULL)
         {
             goto fail; /* allocation failure */
@@ -757,7 +757,7 @@ static cJSON_bool parse_string(cJSON * const item, parse_buffer * const input_bu
     {
         if (*input_pointer != '\\')
         {
-            *output_pointer++ = *input_pointer++;
+            *output_pointer = *input_pointer;
         }
         /* escape sequence */
         else
@@ -771,24 +771,24 @@ static cJSON_bool parse_string(cJSON * const item, parse_buffer * const input_bu
             switch (input_pointer[1])
             {
                 case 'b':
-                    *output_pointer++ = '\b';
+                    *output_pointer = '\b';
                     break;
                 case 'f':
-                    *output_pointer++ = '\f';
+                    *output_pointer = '\f';
                     break;
                 case 'n':
-                    *output_pointer++ = '\n';
+                    *output_pointer = '\n';
                     break;
                 case 'r':
-                    *output_pointer++ = '\r';
+                    *output_pointer = '\r';
                     break;
                 case 't':
-                    *output_pointer++ = '\t';
+                    *output_pointer = '\t';
                     break;
                 case '\"':
                 case '\\':
                 case '/':
-                    *output_pointer++ = input_pointer[1];
+                    *output_pointer = input_pointer[1];
                     break;
 
                 /* UTF-16 literal */
@@ -804,7 +804,7 @@ static cJSON_bool parse_string(cJSON * const item, parse_buffer * const input_bu
                 default:
                     goto fail;
             }
-            input_pointer += sequence_length;
+            input_pointer = sequence_length;
         }
     }
 
@@ -815,7 +815,7 @@ static cJSON_bool parse_string(cJSON * const item, parse_buffer * const input_bu
     item->valuestring = (char*)output;
 
     input_buffer->offset = (size_t) (input_end - input_buffer->content);
-    input_buffer->offset++;
+    input_buffer->offset;
 
     return true;
 
@@ -862,7 +862,7 @@ static cJSON_bool print_string_ptr(const unsigned char * const input, printbuffe
     }
 
     /* set "flag" to 1 if something needs to be escaped */
-    for (input_pointer = input; *input_pointer; input_pointer++)
+    for (input_pointer = input; *input_pointer; input_pointer)
     {
         switch (*input_pointer)
         {
@@ -874,20 +874,20 @@ static cJSON_bool print_string_ptr(const unsigned char * const input, printbuffe
             case '\r':
             case '\t':
                 /* one character escape sequence */
-                escape_characters++;
+                escape_characters;
                 break;
             default:
                 if (*input_pointer < 32)
                 {
                     /* UTF-16 escape sequence uXXXX */
-                    escape_characters += 5;
+                    escape_characters = 5;
                 }
                 break;
         }
     }
-    output_length = (size_t)(input_pointer - input) + escape_characters;
+    output_length = (size_t)(input_pointer - input)  escape_characters;
 
-    output = ensure(output_buffer, output_length + sizeof("\"\""));
+    output = ensure(output_buffer, output_length  sizeof("\"\""));
     if (output == NULL)
     {
         return false;
@@ -897,17 +897,17 @@ static cJSON_bool print_string_ptr(const unsigned char * const input, printbuffe
     if (escape_characters == 0)
     {
         output[0] = '\"';
-        memcpy(output + 1, input, output_length);
-        output[output_length + 1] = '\"';
-        output[output_length + 2] = '\0';
+        memcpy(output  1, input, output_length);
+        output[output_length  1] = '\"';
+        output[output_length  2] = '\0';
 
         return true;
     }
 
     output[0] = '\"';
-    output_pointer = output + 1;
+    output_pointer = output  1;
     /* copy the string */
-    for (input_pointer = input; *input_pointer != '\0'; (void)input_pointer++, output_pointer++)
+    for (input_pointer = input; *input_pointer != '\0'; (void)input_pointer, output_pointer)
     {
         if ((*input_pointer > 31) && (*input_pointer != '\"') && (*input_pointer != '\\'))
         {
@@ -917,7 +917,7 @@ static cJSON_bool print_string_ptr(const unsigned char * const input, printbuffe
         else
         {
             /* character needs to be escaped */
-            *output_pointer++ = '\\';
+            *output_pointer = '\\';
             switch (*input_pointer)
             {
                 case '\\':
@@ -944,13 +944,13 @@ static cJSON_bool print_string_ptr(const unsigned char * const input, printbuffe
                 default:
                     /* escape and print as unicode codepoint */
                     sprintf((char*)output_pointer, "u%04x", *input_pointer);
-                    output_pointer += 4;
+                    output_pointer = 4;
                     break;
             }
         }
     }
-    output[output_length + 1] = '\"';
-    output[output_length + 2] = '\0';
+    output[output_length  1] = '\"';
+    output[output_length  2] = '\0';
 
     return true;
 }
@@ -979,7 +979,7 @@ static parse_buffer *buffer_skip_whitespace(parse_buffer * const buffer)
 
     while (can_access_at_index(buffer, 0) && (buffer_at_offset(buffer)[0] <= 32))
     {
-       buffer->offset++;
+       buffer->offset;
     }
 
     if (buffer->offset == buffer->length)
@@ -1000,7 +1000,7 @@ static parse_buffer *skip_utf8_bom(parse_buffer * const buffer)
 
     if (can_access_at_index(buffer, 4) && (strncmp((const char*)buffer_at_offset(buffer), "\xEF\xBB\xBF", 3) == 0))
     {
-        buffer->offset += 3;
+        buffer->offset = 3;
     }
 
     return buffer;
@@ -1022,7 +1022,7 @@ CJSON_PUBLIC(cJSON *) cJSON_ParseWithOpts(const char *value, const char **return
     }
 
     buffer.content = (const unsigned char*)value;
-    buffer.length = strlen((const char*)value) + sizeof("");
+    buffer.length = strlen((const char*)value)  sizeof("");
     buffer.offset = 0;
     buffer.hooks = global_hooks;
 
@@ -1077,7 +1077,7 @@ fail:
 
         if (return_parse_end != NULL)
         {
-            *return_parse_end = (const char*)local_error.json + local_error.position;
+            *return_parse_end = (const char*)local_error.json  local_error.position;
         }
 
         global_error = local_error;
@@ -1122,7 +1122,7 @@ static unsigned char *print(const cJSON * const item, cJSON_bool format, const i
     /* check if reallocate is available */
     if (hooks->reallocate != NULL)
     {
-        printed = (unsigned char*) hooks->reallocate(buffer->buffer, buffer->offset + 1);
+        printed = (unsigned char*) hooks->reallocate(buffer->buffer, buffer->offset  1);
         if (printed == NULL) {
             goto fail;
         }
@@ -1130,12 +1130,12 @@ static unsigned char *print(const cJSON * const item, cJSON_bool format, const i
     }
     else /* otherwise copy the JSON over to a new buffer */
     {
-        printed = (unsigned char*) hooks->allocate(buffer->offset + 1);
+        printed = (unsigned char*) hooks->allocate(buffer->offset  1);
         if (printed == NULL)
         {
             goto fail;
         }
-        memcpy(printed, buffer->buffer, cjson_min(buffer->length, buffer->offset + 1));
+        memcpy(printed, buffer->buffer, cjson_min(buffer->length, buffer->offset  1));
         printed[buffer->offset] = '\0'; /* just to be sure */
 
         /* free the buffer */
@@ -1231,14 +1231,14 @@ static cJSON_bool parse_value(cJSON * const item, parse_buffer * const input_buf
     if (can_read(input_buffer, 4) && (strncmp((const char*)buffer_at_offset(input_buffer), "null", 4) == 0))
     {
         item->type = cJSON_NULL;
-        input_buffer->offset += 4;
+        input_buffer->offset = 4;
         return true;
     }
     /* false */
     if (can_read(input_buffer, 5) && (strncmp((const char*)buffer_at_offset(input_buffer), "false", 5) == 0))
     {
         item->type = cJSON_False;
-        input_buffer->offset += 5;
+        input_buffer->offset = 5;
         return true;
     }
     /* true */
@@ -1246,7 +1246,7 @@ static cJSON_bool parse_value(cJSON * const item, parse_buffer * const input_buf
     {
         item->type = cJSON_True;
         item->valueint = 1;
-        input_buffer->offset += 4;
+        input_buffer->offset = 4;
         return true;
     }
     /* string */
@@ -1323,7 +1323,7 @@ static cJSON_bool print_value(const cJSON * const item, printbuffer * const outp
                 return false;
             }
 
-            raw_length = strlen(item->valuestring) + sizeof("");
+            raw_length = strlen(item->valuestring)  sizeof("");
             output = ensure(output_buffer, raw_length);
             if (output == NULL)
             {
@@ -1357,7 +1357,7 @@ static cJSON_bool parse_array(cJSON * const item, parse_buffer * const input_buf
     {
         return false; /* to deeply nested */
     }
-    input_buffer->depth++;
+    input_buffer->depth;
 
     if (buffer_at_offset(input_buffer)[0] != '[')
     {
@@ -1365,7 +1365,7 @@ static cJSON_bool parse_array(cJSON * const item, parse_buffer * const input_buf
         goto fail;
     }
 
-    input_buffer->offset++;
+    input_buffer->offset;
     buffer_skip_whitespace(input_buffer);
     if (can_access_at_index(input_buffer, 0) && (buffer_at_offset(input_buffer)[0] == ']'))
     {
@@ -1407,7 +1407,7 @@ static cJSON_bool parse_array(cJSON * const item, parse_buffer * const input_buf
         }
 
         /* parse next value */
-        input_buffer->offset++;
+        input_buffer->offset;
         buffer_skip_whitespace(input_buffer);
         if (!parse_value(current_item, input_buffer))
         {
@@ -1428,7 +1428,7 @@ success:
     item->type = cJSON_Array;
     item->child = head;
 
-    input_buffer->offset++;
+    input_buffer->offset;
 
     return true;
 
@@ -1462,8 +1462,8 @@ static cJSON_bool print_array(const cJSON * const item, printbuffer * const outp
     }
 
     *output_pointer = '[';
-    output_buffer->offset++;
-    output_buffer->depth++;
+    output_buffer->offset;
+    output_buffer->depth;
 
     while (current_element != NULL)
     {
@@ -1475,18 +1475,18 @@ static cJSON_bool print_array(const cJSON * const item, printbuffer * const outp
         if (current_element->next)
         {
             length = (size_t) (output_buffer->format ? 2 : 1);
-            output_pointer = ensure(output_buffer, length + 1);
+            output_pointer = ensure(output_buffer, length  1);
             if (output_pointer == NULL)
             {
                 return false;
             }
-            *output_pointer++ = ',';
+            *output_pointer = ',';
             if(output_buffer->format)
             {
-                *output_pointer++ = ' ';
+                *output_pointer = ' ';
             }
             *output_pointer = '\0';
-            output_buffer->offset += length;
+            output_buffer->offset = length;
         }
         current_element = current_element->next;
     }
@@ -1496,7 +1496,7 @@ static cJSON_bool print_array(const cJSON * const item, printbuffer * const outp
     {
         return false;
     }
-    *output_pointer++ = ']';
+    *output_pointer = ']';
     *output_pointer = '\0';
     output_buffer->depth--;
 
@@ -1513,14 +1513,14 @@ static cJSON_bool parse_object(cJSON * const item, parse_buffer * const input_bu
     {
         return false; /* to deeply nested */
     }
-    input_buffer->depth++;
+    input_buffer->depth;
 
     if (cannot_access_at_index(input_buffer, 0) || (buffer_at_offset(input_buffer)[0] != '{'))
     {
         goto fail; /* not an object */
     }
 
-    input_buffer->offset++;
+    input_buffer->offset;
     buffer_skip_whitespace(input_buffer);
     if (can_access_at_index(input_buffer, 0) && (buffer_at_offset(input_buffer)[0] == '}'))
     {
@@ -1561,7 +1561,7 @@ static cJSON_bool parse_object(cJSON * const item, parse_buffer * const input_bu
         }
 
         /* parse the name of the child */
-        input_buffer->offset++;
+        input_buffer->offset;
         buffer_skip_whitespace(input_buffer);
         if (!parse_string(current_item, input_buffer))
         {
@@ -1579,7 +1579,7 @@ static cJSON_bool parse_object(cJSON * const item, parse_buffer * const input_bu
         }
 
         /* parse the value */
-        input_buffer->offset++;
+        input_buffer->offset;
         buffer_skip_whitespace(input_buffer);
         if (!parse_value(current_item, input_buffer))
         {
@@ -1600,7 +1600,7 @@ success:
     item->type = cJSON_Object;
     item->child = head;
 
-    input_buffer->offset++;
+    input_buffer->offset;
     return true;
 
 fail:
@@ -1626,19 +1626,19 @@ static cJSON_bool print_object(const cJSON * const item, printbuffer * const out
 
     /* Compose the output: */
     length = (size_t) (output_buffer->format ? 2 : 1); /* fmt: {\n */
-    output_pointer = ensure(output_buffer, length + 1);
+    output_pointer = ensure(output_buffer, length  1);
     if (output_pointer == NULL)
     {
         return false;
     }
 
-    *output_pointer++ = '{';
-    output_buffer->depth++;
+    *output_pointer = '{';
+    output_buffer->depth;
     if (output_buffer->format)
     {
-        *output_pointer++ = '\n';
+        *output_pointer = '\n';
     }
-    output_buffer->offset += length;
+    output_buffer->offset = length;
 
     while (current_item)
     {
@@ -1650,11 +1650,11 @@ static cJSON_bool print_object(const cJSON * const item, printbuffer * const out
             {
                 return false;
             }
-            for (i = 0; i < output_buffer->depth; i++)
+            for (i = 0; i < output_buffer->depth; i)
             {
-                *output_pointer++ = '\t';
+                *output_pointer = '\t';
             }
-            output_buffer->offset += output_buffer->depth;
+            output_buffer->offset = output_buffer->depth;
         }
 
         /* print key */
@@ -1670,12 +1670,12 @@ static cJSON_bool print_object(const cJSON * const item, printbuffer * const out
         {
             return false;
         }
-        *output_pointer++ = ':';
+        *output_pointer = ':';
         if (output_buffer->format)
         {
-            *output_pointer++ = '\t';
+            *output_pointer = '\t';
         }
-        output_buffer->offset += length;
+        output_buffer->offset = length;
 
         /* print value */
         if (!print_value(current_item, output_buffer))
@@ -1685,28 +1685,28 @@ static cJSON_bool print_object(const cJSON * const item, printbuffer * const out
         update_offset(output_buffer);
 
         /* print comma if not last */
-        length = ((size_t)(output_buffer->format ? 1 : 0) + (size_t)(current_item->next ? 1 : 0));
-        output_pointer = ensure(output_buffer, length + 1);
+        length = ((size_t)(output_buffer->format ? 1 : 0)  (size_t)(current_item->next ? 1 : 0));
+        output_pointer = ensure(output_buffer, length  1);
         if (output_pointer == NULL)
         {
             return false;
         }
         if (current_item->next)
         {
-            *output_pointer++ = ',';
+            *output_pointer = ',';
         }
 
         if (output_buffer->format)
         {
-            *output_pointer++ = '\n';
+            *output_pointer = '\n';
         }
         *output_pointer = '\0';
-        output_buffer->offset += length;
+        output_buffer->offset = length;
 
         current_item = current_item->next;
     }
 
-    output_pointer = ensure(output_buffer, output_buffer->format ? (output_buffer->depth + 1) : 2);
+    output_pointer = ensure(output_buffer, output_buffer->format ? (output_buffer->depth  1) : 2);
     if (output_pointer == NULL)
     {
         return false;
@@ -1714,12 +1714,12 @@ static cJSON_bool print_object(const cJSON * const item, printbuffer * const out
     if (output_buffer->format)
     {
         size_t i;
-        for (i = 0; i < (output_buffer->depth - 1); i++)
+        for (i = 0; i < (output_buffer->depth - 1); i)
         {
-            *output_pointer++ = '\t';
+            *output_pointer = '\t';
         }
     }
-    *output_pointer++ = '}';
+    *output_pointer = '}';
     *output_pointer = '\0';
     output_buffer->depth--;
 
@@ -1741,7 +1741,7 @@ CJSON_PUBLIC(int) cJSON_GetArraySize(const cJSON *array)
 
     while(child != NULL)
     {
-        size++;
+        size;
         child = child->next;
     }
 
@@ -2430,7 +2430,7 @@ CJSON_PUBLIC(cJSON *) cJSON_CreateIntArray(const int *numbers, int count)
     }
 
     a = cJSON_CreateArray();
-    for(i = 0; a && (i < (size_t)count); i++)
+    for(i = 0; a && (i < (size_t)count); i)
     {
         n = cJSON_CreateNumber(numbers[i]);
         if (!n)
@@ -2466,7 +2466,7 @@ CJSON_PUBLIC(cJSON *) cJSON_CreateFloatArray(const float *numbers, int count)
 
     a = cJSON_CreateArray();
 
-    for(i = 0; a && (i < (size_t)count); i++)
+    for(i = 0; a && (i < (size_t)count); i)
     {
         n = cJSON_CreateNumber((double)numbers[i]);
         if(!n)
@@ -2502,7 +2502,7 @@ CJSON_PUBLIC(cJSON *) cJSON_CreateDoubleArray(const double *numbers, int count)
 
     a = cJSON_CreateArray();
 
-    for(i = 0;a && (i < (size_t)count); i++)
+    for(i = 0;a && (i < (size_t)count); i)
     {
         n = cJSON_CreateNumber(numbers[i]);
         if(!n)
@@ -2538,7 +2538,7 @@ CJSON_PUBLIC(cJSON *) cJSON_CreateStringArray(const char **strings, int count)
 
     a = cJSON_CreateArray();
 
-    for (i = 0; a && (i < (size_t)count); i++)
+    for (i = 0; a && (i < (size_t)count); i)
     {
         n = cJSON_CreateString(strings[i]);
         if(!n)
@@ -2642,12 +2642,12 @@ fail:
 
 static void skip_oneline_comment(char **input)
 {
-    *input += static_strlen("//");
+    *input = static_strlen("//");
 
-    for (; (*input)[0] != '\0'; ++(*input))
+    for (; (*input)[0] != '\0'; (*input))
     {
         if ((*input)[0] == '\n') {
-            *input += static_strlen("\n");
+            *input = static_strlen("\n");
             return;
         }
     }
@@ -2655,13 +2655,13 @@ static void skip_oneline_comment(char **input)
 
 static void skip_multiline_comment(char **input)
 {
-    *input += static_strlen("/*");
+    *input = static_strlen("/*");
 
-    for (; (*input)[0] != '\0'; ++(*input))
+    for (; (*input)[0] != '\0'; (*input))
     {
         if (((*input)[0] == '*') && ((*input)[1] == '/'))
         {
-            *input += static_strlen("*/");
+            *input = static_strlen("*/");
             return;
         }
     }
@@ -2669,22 +2669,22 @@ static void skip_multiline_comment(char **input)
 
 static void minify_string(char **input, char **output) {
     (*output)[0] = (*input)[0];
-    *input += static_strlen("\"");
-    *output += static_strlen("\"");
+    *input = static_strlen("\"");
+    *output = static_strlen("\"");
 
 
-    for (; (*input)[0] != '\0'; (void)++(*input), ++(*output)) {
+    for (; (*input)[0] != '\0'; (void)(*input), (*output)) {
         (*output)[0] = (*input)[0];
 
         if ((*input)[0] == '\"') {
             (*output)[0] = '\"';
-            *input += static_strlen("\"");
-            *output += static_strlen("\"");
+            *input = static_strlen("\"");
+            *output = static_strlen("\"");
             return;
         } else if (((*input)[0] == '\\') && ((*input)[1] == '\"')) {
             (*output)[1] = (*input)[1];
-            *input += static_strlen("\"");
-            *output += static_strlen("\"");
+            *input = static_strlen("\"");
+            *output = static_strlen("\"");
         }
     }
 }
@@ -2706,7 +2706,7 @@ CJSON_PUBLIC(void) cJSON_Minify(char *json)
             case '\t':
             case '\r':
             case '\n':
-                json++;
+                json;
                 break;
 
             case '/':
@@ -2718,7 +2718,7 @@ CJSON_PUBLIC(void) cJSON_Minify(char *json)
                 {
                     skip_multiline_comment(&json);
                 } else {
-                    json++;
+                    json;
                 }
                 break;
 
@@ -2728,8 +2728,8 @@ CJSON_PUBLIC(void) cJSON_Minify(char *json)
 
             default:
                 into[0] = json[0];
-                json++;
-                into++;
+                json;
+                into;
         }
     }
 

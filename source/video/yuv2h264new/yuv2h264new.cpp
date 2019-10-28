@@ -149,7 +149,7 @@ int main_cpu(int argc, char* argv[]) {
 		}
 
 		pframe->pts = i; 
-		++i; 
+		i; 
 		//cout << "frame i " << i << endl;
 		encode(cctx, pframe, pkt, p_outfile);
 	}
@@ -277,7 +277,7 @@ int main_gpu(int argc, char* argv[]) {
 		}
 
 		pframe->pts = i;
-		++i;
+		i;
 		//cout << "frame i " << i << endl;
 		encode(cctx, pframe, pkt, p_outfile);
 	}

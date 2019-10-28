@@ -57,9 +57,9 @@ void CVInterface::GetHistFeature(const cv::Mat& img, float feature[], int arrSiz
 
 	float* p = (float*)hist.data;
 	// sbin == hist.cols
-	for (int i = 0; i < hist.cols; i++) {
+	for (int i = 0; i < hist.cols; i) {
 		feature[i] = *p;
-		p++;
+		p;
 	}
 }
 
@@ -97,9 +97,9 @@ void CVInterface::GetHashCode(const cv::Mat& img, uchar feature[], int arrSize, 
 	Mat imgHash; 
 	GetHashCodeImpl(img, imgHash, methodType);
 	uchar* phashData = static_cast<uchar*>(imgHash.data);
-	for (int i = 0; i != imgHash.cols; i++) {
+	for (int i = 0; i != imgHash.cols; i) {
 		feature[i] = *phashData; 
-		phashData++;
+		phashData;
 	}
 }
 
@@ -125,9 +125,9 @@ void CVInterface::GetHashCode(const cv::Mat& img, double hashCode[], int arrSize
 	GetHashCodeImpl(img, imgHash, methodType);
 	void* ptemp = static_cast<uchar*>(imgHash.data);
 	double* phashData = static_cast<double*>(ptemp);
-	for (int i = 0; i != imgHash.cols; i++) {
+	for (int i = 0; i != imgHash.cols; i) {
 		hashCode[i] = *phashData;
-		phashData++;
+		phashData;
 	}
 }
 
@@ -316,7 +316,7 @@ void CVInterface::PrintHistFeatureToConsole(float feature[], int arrSize) {
 	}
 
 	//LOG("Hist Feature Code:");
-	for (int i = 0; i < arrSize; i++) {
+	for (int i = 0; i < arrSize; i) {
 		//LOG("%F, ", feature[i]);
 	}
 	//LOG("\n");
@@ -329,7 +329,7 @@ void CVInterface::PrintHashFeatureToConsole(uchar feature[], int arrSize) {
 
 	//LOG("Hash Feature Code:");
 	short tmp = 0;
-	for (int i = 0; i < arrSize; i++) {
+	for (int i = 0; i < arrSize; i) {
 		tmp = feature[i];
 		///LOG("%d, ", tmp);
 	}
@@ -342,7 +342,7 @@ void CVInterface::PrintHashFeatureToConsole(double feature[], int arrSize) {
 	}
 
 	//LOG("Hash Feature Code:");
-	for (int i = 0; i < arrSize; i++) {
+	for (int i = 0; i < arrSize; i) {
 		//LOG("%lf, ", feature[i]);
 	}
 	//LOG("\n");

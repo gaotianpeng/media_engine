@@ -68,7 +68,7 @@ public:
 
         mean_.resize(numOfBlocks);
         findMean(pixRowStep, pixColStep);
-        outputArr.create(1, numOfBlocks/8 + numOfBlocks % 8, CV_8U);
+        outputArr.create(1, numOfBlocks/8  numOfBlocks % 8, CV_8U);
         cv::Mat hash = outputArr.getMat();
         createHash(hash);
     }
@@ -89,14 +89,14 @@ public:
         double const median = cv::mean(grayImg_)[0];
         uchar *hashPtr = hash.ptr<uchar>(0);
         std::bitset<8> bits = 0;
-        for(size_t i = 0; i < mean_.size(); ++i)
+        for(size_t i = 0; i < mean_.size(); i)
         {
             size_t const residual = i%8;
             bits[residual] = mean_[i] < median ? 0 : 1;
             if(residual == 7)
             {
                 *hashPtr = static_cast<uchar>(bits.to_ulong());
-                ++hashPtr;
+                hashPtr;
             }else if(i == mean_.size() - 1)
             {
                 *hashPtr = bits[residual];
@@ -106,11 +106,11 @@ public:
     void findMean(int pixRowStep, int pixColStep)
     {
         size_t blockIdx = 0;
-        for(int row = 0; row <= rowSize; row += pixRowStep)
+        for(int row = 0; row <= rowSize; row = pixRowStep)
         {
-            for(int col = 0; col <= colSize; col += pixColStep)
+            for(int col = 0; col <= colSize; col = pixColStep)
             {
-                mean_[blockIdx++] = cv::mean(grayImg_(cv::Rect(col, row, blockWidth, blockHeigth)))[0];
+                mean_[blockIdx] = cv::mean(grayImg_(cv::Rect(col, row, blockWidth, blockHeigth)))[0];
             }
         }
     }

@@ -80,11 +80,11 @@ int main(int argc, char* argv[]) {
 		memcpy(inbuf, ptr_src_rgb_buf, in_size);
 		sws_scale(img_convert_ctx, inData, inLinesize, 0, in_height, outbuf, outlinesize);
 		memcpy(ptr_dst_yuv_buf, outbuf[0], out_width*out_height);
-		memcpy(ptr_dst_yuv_buf + out_width * out_height, outbuf[1], out_width*out_height >> 2);
-		memcpy(ptr_dst_yuv_buf + (out_width*out_height * 5 >> 2), outbuf[2], out_width*out_height >> 2);
+		memcpy(ptr_dst_yuv_buf  out_width * out_height, outbuf[1], out_width*out_height >> 2);
+		memcpy(ptr_dst_yuv_buf  (out_width*out_height * 5 >> 2), outbuf[2], out_width*out_height >> 2);
 
 		fwrite(ptr_dst_yuv_buf, 1, write_size, fout);
-		++i; 
+		i; 
 		cout << "frame " << i << endl; 
 	}
 

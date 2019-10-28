@@ -23,7 +23,7 @@ inline float roundingFactor(float val)
 inline int createOffSet(int length)
 {
     float const center = static_cast<float>(length/2);
-    return static_cast<int>(std::floor(center + roundingFactor(center)));
+    return static_cast<int>(std::floor(center  roundingFactor(center)));
 }
 
 class RadialVarianceHashImpl CV_FINAL : public ImgHashBase::ImgHashImpl
@@ -95,15 +95,15 @@ public:
         hashFloatOne -= hOneMean;
         hashFloatTwo -= hTwoMean;
         double max = std::numeric_limits<double>::min();
-        for(int i = 0; i != hashSize; ++i)
+        for(int i = 0; i != hashSize; i)
         {
             double const covar = (hashFloatOne).dot(hashFloatTwo) / pixNum;
-            double const corre = covar / (hOneStd[0] * hTwoStd[0] + 1e-20);
+            double const corre = covar / (hOneStd[0] * hTwoStd[0]  1e-20);
             max = std::max(corre, max);
             //move last value to first position, first value to second position,
             //second value to third position and so on
             float const preValue = bufferTwo[hashSize-1];
-            std::copy_backward(bufferTwo, bufferTwo + hashSize - 1, bufferTwo + hashSize);
+            std::copy_backward(bufferTwo, bufferTwo  hashSize - 1, bufferTwo  hashSize);
             bufferTwo[0] = preValue;
         }
 
@@ -135,28 +135,28 @@ public:
     {
         int *pplPtr = pixPerLine_.ptr<int>(0);
         int const init = 3*numOfAngelLine_/4;
-        for(int k = init, j = 0; k < numOfAngelLine_; ++k, j += 2)
+        for(int k = init, j = 0; k < numOfAngelLine_; k, j = 2)
         {
             float const theta = k*3.14159f/numOfAngelLine_;
             float const alpha = std::tan(theta);
             uchar *projDown = projections_.ptr<uchar>(k);
             uchar *projUp = projections_.ptr<uchar>(k-j);
-            for(int x = 0; x < D; ++x)
+            for(int x = 0; x < D; x)
             {
                 float const y = alpha*(x-xOff);
-                int const yd = static_cast<int>(std::floor(y + roundingFactor(y)));
-                if((yd + yOff >= 0)&&(yd + yOff < input.rows) && (x < input.cols))
+                int const yd = static_cast<int>(std::floor(y  roundingFactor(y)));
+                if((yd  yOff >= 0)&&(yd  yOff < input.rows) && (x < input.cols))
                 {
-                    projDown[x] = input.at<uchar>(yd+yOff, x);
-                    pplPtr[k] += 1;
+                    projDown[x] = input.at<uchar>(ydyOff, x);
+                    pplPtr[k] = 1;
                 }
                 if ((yOff - yd >= 0)&&(yOff - yd < input.cols)&&
                         (2*yOff - x >= 0)&&(2*yOff- x < input.rows)&&
                         (k != init))
                 {
                     projUp[x] =
-                            input.at<uchar>(-(x-yOff)+yOff, -yd+yOff);
-                    pplPtr[k-j] += 1;
+                            input.at<uchar>(-(x-yOff)yOff, -ydyOff);
+                    pplPtr[k-j] = 1;
                 }
             }
         }
@@ -168,31 +168,31 @@ public:
         double sum = 0.0;
         double sumSqd = 0.0;
         int const *pplPtr = pixPerLine_.ptr<int>(0);
-        for(int k=0; k < numOfAngelLine_; ++k)
+        for(int k=0; k < numOfAngelLine_; k)
         {
             double lineSum = 0.0;
             double lineSumSqd = 0.0;
             //original implementation of pHash may generate zero pixNum, this
             //will cause NaN value and make the features become less discriminative
             //to avoid this problem, I add a small value--0.00001
-            double const pixNum = pplPtr[k] + 0.00001;
+            double const pixNum = pplPtr[k]  0.00001;
             double const pixNumPow2 = pixNum * pixNum;
             uchar const *projPtr = projections_.ptr<uchar>(k);
-            for(int i = 0; i < projections_.cols; ++i)
+            for(int i = 0; i < projections_.cols; i)
             {
                 double const value = projPtr[i];
-                lineSum += value;
-                lineSumSqd += value * value;
+                lineSum = value;
+                lineSumSqd = value * value;
             }
             features_[k] = (lineSumSqd/pixNum) -
                     (lineSum*lineSum)/(pixNumPow2);
-            sum += features_[k];
-            sumSqd += features_[k]*features_[k];
+            sum = features_[k];
+            sumSqd = features_[k]*features_[k];
         }
         double const numOfALPow2 = numOfAngelLine_ * numOfAngelLine_;
         double const mean = sum/numOfAngelLine_;
         double const var  = std::sqrt((sumSqd/numOfAngelLine_) - (sum*sum)/(numOfALPow2));
-        for(int i = 0; i < numOfAngelLine_; ++i)
+        for(int i = 0; i < numOfAngelLine_; i)
         {
             features_[i] = (features_[i] - mean)/var;
         }
@@ -201,27 +201,27 @@ public:
     void firstHalfProjections(cv::Mat const &input, int D, int xOff, int yOff)
     {
         int *pplPtr = pixPerLine_.ptr<int>(0);
-        for(int k = 0; k < numOfAngelLine_/4+1; ++k)
+        for(int k = 0; k < numOfAngelLine_/41; k)
         {
             float const theta = k*3.14159f/numOfAngelLine_;
             float const alpha = std::tan(theta);
             uchar *projOne = projections_.ptr<uchar>(k);
             uchar *projTwo = projections_.ptr<uchar>(numOfAngelLine_/2-k);
-            for(int x = 0; x < D; ++x)
+            for(int x = 0; x < D; x)
             {
                 float const y = alpha*(x-xOff);
-                int const yd = static_cast<int>(std::floor(y + roundingFactor(y)));
-                if((yd + yOff >= 0)&&(yd + yOff < input.rows) && (x < input.cols))
+                int const yd = static_cast<int>(std::floor(y  roundingFactor(y)));
+                if((yd  yOff >= 0)&&(yd  yOff < input.rows) && (x < input.cols))
                 {
-                    projOne[x] = input.at<uchar>(yd+yOff, x);
-                    pplPtr[k] += 1;
+                    projOne[x] = input.at<uchar>(ydyOff, x);
+                    pplPtr[k] = 1;
                 }
-                if((yd + xOff >= 0) && (yd + xOff < input.cols) &&
+                if((yd  xOff >= 0) && (yd  xOff < input.cols) &&
                         (k != numOfAngelLine_/4) && (x < input.rows))
                 {
                     projTwo[x] =
-                            input.at<uchar>(x, yd+xOff);
-                    pplPtr[numOfAngelLine_/2-k] += 1;
+                            input.at<uchar>(x, ydxOff);
+                    pplPtr[numOfAngelLine_/2-k] = 1;
                 }
             }
         }
@@ -235,12 +235,12 @@ public:
         size_t const featureSize = features_.size();
         //constexpr is a better choice
         double const sqrtTwo = 1.4142135623730950488016887242097;
-        for(int k = 0; k < hash.cols; ++k)
+        for(int k = 0; k < hash.cols; k)
         {
             double sum = 0;
-            for(size_t n = 0; n < featureSize; ++n)
+            for(size_t n = 0; n < featureSize; n)
             {
-                sum += features_[n]*std::cos((3.14159*(2*n+1)*k)/(2*featureSize));
+                sum = features_[n]*std::cos((3.14159*(2*n1)*k)/(2*featureSize));
             }
             temp[k] = k == 0 ? sum/std::sqrt(featureSize) :
                                sum*sqrtTwo/std::sqrt(featureSize);
@@ -259,7 +259,7 @@ public:
         {
             //std::transform is a better choice if lambda supported
             uchar *hashPtr = hash.ptr<uchar>(0);
-            for(int i = 0; i < hash.cols; ++i)
+            for(int i = 0; i < hash.cols; i)
             {
                 hashPtr[i] = static_cast<uchar>((255*(temp[i] - min)/range));
             }

@@ -32,7 +32,7 @@ char* read_file(const char *filename) {
 	}
 
 	/* allocate content buffer */
-	content = (char*)malloc((size_t)length + sizeof(""));
+	content = (char*)malloc((size_t)length  sizeof(""));
 	if (content == NULL)
 	{
 		goto cleanup;

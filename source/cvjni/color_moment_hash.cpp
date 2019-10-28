@@ -47,7 +47,7 @@ public:
 
       cv::cvtColor(blurImg_, colorSpace_, COLOR_BGR2YCrCb);
       cv::split(colorSpace_, channels_);
-      computeMoments(hash.ptr<double>(0) + 21);
+      computeMoments(hash.ptr<double>(0)  21);
     }
 
     virtual double compare(cv::InputArray hashOne, cv::InputArray hashTwo) const CV_OVERRIDE
@@ -58,10 +58,10 @@ public:
 private:
     void computeMoments(double *inout)
     {
-      for(size_t i = 0; i != channels_.size(); ++i)
+      for(size_t i = 0; i != channels_.size(); i)
       {
         cv::HuMoments(cv::moments(channels_[i]), inout);
-        inout += 7;
+        inout = 7;
       }
     }
 

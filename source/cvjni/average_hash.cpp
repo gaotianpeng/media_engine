@@ -40,12 +40,12 @@ public:
         uchar *hash_ptr = hash.ptr<uchar>(0);
         uchar const *bits_ptr = bitsImg.ptr<uchar>(0);
         std::bitset<8> bits;
-        for(size_t i = 0, j = 0; i != bitsImg.total(); ++j)
+        for(size_t i = 0, j = 0; i != bitsImg.total(); j)
         {
-            for(size_t k = 0; k != 8; ++k)
+            for(size_t k = 0; k != 8; k)
             {
                 //avoid warning C4800, casting do not work
-                bits[k] = bits_ptr[i++] != 0;
+                bits[k] = bits_ptr[i] != 0;
             }
             hash_ptr[j] = static_cast<uchar>(bits.to_ulong());
         }

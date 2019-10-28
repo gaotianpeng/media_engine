@@ -58,10 +58,10 @@ int main(int argc, char* argv[]) {
 		cout << &out_img.data << "-----------------------------------------" <<endl; 
 
 		memcpy(ptr_dst_yuv444_buf, mat_split[0].data, ysize);
-		memcpy(ptr_dst_yuv444_buf + ysize, mat_split[1].data, ysize);
-		memcpy(ptr_dst_yuv444_buf + ysize + ysize, mat_split[2].data, ysize);
+		memcpy(ptr_dst_yuv444_buf  ysize, mat_split[1].data, ysize);
+		memcpy(ptr_dst_yuv444_buf  ysize  ysize, mat_split[2].data, ysize);
 		fwrite(ptr_dst_yuv444_buf, 1, writeSize, file_out); 
-		++i; 
+		i; 
 		cout << "frame " << i << endl;
 	}
 

@@ -100,7 +100,7 @@ static void add_stream(OutputStream *ost, AVFormatContext *oc,
 		c->sample_rate = 44100;
 		if ((*codec)->supported_samplerates) {
 			c->sample_rate = (*codec)->supported_samplerates[0];
-			for (i = 0; (*codec)->supported_samplerates[i]; i++) {
+			for (i = 0; (*codec)->supported_samplerates[i]; i) {
 				if ((*codec)->supported_samplerates[i] == 44100)
 					c->sample_rate = 44100;
 			}
@@ -109,7 +109,7 @@ static void add_stream(OutputStream *ost, AVFormatContext *oc,
 		c->channel_layout = AV_CH_LAYOUT_STEREO;
 		if ((*codec)->channel_layouts) {
 			c->channel_layout = (*codec)->channel_layouts[0];
-			for (i = 0; (*codec)->channel_layouts[i]; i++) {
+			for (i = 0; (*codec)->channel_layouts[i]; i) {
 				if ((*codec)->channel_layouts[i] == AV_CH_LAYOUT_STEREO)
 					c->channel_layout = AV_CH_LAYOUT_STEREO;
 			}
@@ -265,16 +265,16 @@ static AVFrame *get_audio_frame(OutputStream *ost)
 		STREAM_DURATION, ratial) >= 0)
 		return NULL;
 
-	for (j = 0; j <frame->nb_samples; j++) {
+	for (j = 0; j <frame->nb_samples; j) {
 		v = (int)(sin(ost->t) * 10000);
-		for (i = 0; i < ost->enc->channels; i++)
-			*q++ = v;
-		ost->t += ost->tincr;
-		ost->tincr += ost->tincr2;
+		for (i = 0; i < ost->enc->channels; i)
+			*q = v;
+		ost->t = ost->tincr;
+		ost->tincr = ost->tincr2;
 	}
 
 	frame->pts = ost->next_pts;
-	ost->next_pts += frame->nb_samples;
+	ost->next_pts = frame->nb_samples;
 
 	return frame;
 }
@@ -300,7 +300,7 @@ static int write_audio_frame(AVFormatContext *oc, OutputStream *ost)
 	if (frame) {
 		/* convert samples from native format to destination codec format, using the resampler */
 		/* compute destination number of samples */
-		dst_nb_samples = av_rescale_rnd(swr_get_delay(ost->swr_ctx, c->sample_rate) + frame->nb_samples,
+		dst_nb_samples = av_rescale_rnd(swr_get_delay(ost->swr_ctx, c->sample_rate)  frame->nb_samples,
 			c->sample_rate, c->sample_rate, AV_ROUND_UP);
 		av_assert0(dst_nb_samples == frame->nb_samples);
 
@@ -323,7 +323,7 @@ static int write_audio_frame(AVFormatContext *oc, OutputStream *ost)
 		frame = ost->frame;
 		AVRational ratial = { 1, c->sample_rate };
 		frame->pts = av_rescale_q(ost->samples_count, ratial, c->time_base);
-		ost->samples_count += dst_nb_samples;
+		ost->samples_count = dst_nb_samples;
 	}
 
 	ret = avcodec_encode_audio2(c, &pkt, frame, &got_packet);
@@ -430,15 +430,15 @@ static void fill_yuv_image(AVFrame *pict, int frame_index,
 	i = frame_index;
 
 	/* Y */
-	for (y = 0; y < height; y++)
-		for (x = 0; x < width; x++)
-			pict->data[0][y * pict->linesize[0] + x] = x + y + i * 3;
+	for (y = 0; y < height; y)
+		for (x = 0; x < width; x)
+			pict->data[0][y * pict->linesize[0]  x] = x  y  i * 3;
 
 	/* Cb and Cr */
-	for (y = 0; y < height / 2; y++) {
-		for (x = 0; x < width / 2; x++) {
-			pict->data[1][y * pict->linesize[1] + x] = 128 + y + i * 2;
-			pict->data[2][y * pict->linesize[2] + x] = 64 + x + i * 5;
+	for (y = 0; y < height / 2; y) {
+		for (x = 0; x < width / 2; x) {
+			pict->data[1][y * pict->linesize[1]  x] = 128  y  i * 2;
+			pict->data[2][y * pict->linesize[2]  x] = 64  x  i * 5;
 		}
 	}
 }
@@ -476,7 +476,7 @@ static AVFrame *get_video_frame(OutputStream *ost)
 		fill_yuv_image(ost->frame, ost->next_pts, c->width, c->height);
 	}
 
-	ost->frame->pts = ost->next_pts++;
+	ost->frame->pts = ost->next_pts;
 
 	return ost->frame;
 }
@@ -561,9 +561,9 @@ int main(int argc, char **argv)
 	}
 
 	filename = argv[1];
-	for (i = 2; i + 1 < argc; i += 2) {
+	for (i = 2; i  1 < argc; i = 2) {
 		if (!strcmp(argv[i], "-flags") || !strcmp(argv[i], "-fflags"))
-			av_dict_set(&opt, argv[i] + 1, argv[i + 1], 0);
+			av_dict_set(&opt, argv[i]  1, argv[i  1], 0);
 	}
 
 	/* allocate the output media context */

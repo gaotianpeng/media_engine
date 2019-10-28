@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
 	meter.reset();
 	meter.getTimeTicks();
 	cout << "before for cycle :" << meter.getCounter() << endl; 
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 10; i) {
 		//COLOR_RGBA2YUV_I420
 		cvtColor(img, out, COLOR_BGR2YUV);
 	}

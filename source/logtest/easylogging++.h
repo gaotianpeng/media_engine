@@ -1,8 +1,8 @@
 //
 //  Bismillah ar-Rahmaan ar-Raheem
 //
-//  Easylogging++ v9.96.7
-//  Single-header only, cross-platform logging library for C++ applications
+//  Easylogging v9.96.7
+//  Single-header only, cross-platform logging library for C applications
 //
 //  Copyright (c) 2012-2018 Zuhd Web Services
 //  Copyright (c) 2012-2018 @abumusamq
@@ -16,7 +16,7 @@
 
 #ifndef EASYLOGGINGPP_H
 #define EASYLOGGINGPP_H
-// Compilers and C++0x/C++11 Evaluation
+// Compilers and C0x/C11 Evaluation
 #if __cplusplus >= 201103L
 #  define ELPP_CXX11 1
 #endif  // __cplusplus >= 201103L
@@ -27,13 +27,13 @@
 #endif
 #if ELPP_COMPILER_GCC
 #    define ELPP_GCC_VERSION (__GNUC__ * 10000 \
-+ __GNUC_MINOR__ * 100 \
-+ __GNUC_PATCHLEVEL__)
+ __GNUC_MINOR__ * 100 \
+ __GNUC_PATCHLEVEL__)
 #  if defined(__GXX_EXPERIMENTAL_CXX0X__)
 #    define ELPP_CXX0X 1
 #  endif
 #endif
-// Visual C++
+// Visual C
 #if defined(_MSC_VER)
 #  define ELPP_COMPILER_MSVC 1
 #else
@@ -47,7 +47,7 @@
 #    define ELPP_CXX11 1
 #  endif
 #endif
-// Clang++
+// Clang
 #if (defined(__clang__) && (__clang__ == 1))
 #  define ELPP_COMPILER_CLANG 1
 #else
@@ -55,7 +55,7 @@
 #endif
 #if ELPP_COMPILER_CLANG
 #  if __has_include(<thread>)
-#    include <cstddef> // Make __GLIBCXX__ defined when using libstdc++
+#    include <cstddef> // Make __GLIBCXX__ defined when using libstdc
 #    if !defined(__GLIBCXX__) || __GLIBCXX__ >= 20150426
 #      define ELPP_CLANG_SUPPORTS_THREAD
 #    endif // !defined(__GLIBCXX__) || __GLIBCXX__ >= 20150426
@@ -155,14 +155,14 @@
 #    define ELPP_ASSERT(expr, msg) if (!(expr)) { \
 std::stringstream internalInfoStream; internalInfoStream << msg; \
 ELPP_INTERNAL_DEBUGGING_OUT_ERROR \
-<< "EASYLOGGING++ ASSERTION FAILED (LINE: " << __LINE__ << ") [" #expr << "] WITH MESSAGE \"" \
+<< "EASYLOGGING ASSERTION FAILED (LINE: " << __LINE__ << ") [" #expr << "] WITH MESSAGE \"" \
 << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStream.str()) << "\"" << ELPP_INTERNAL_DEBUGGING_ENDL; base::utils::abort(1, \
 "ELPP Assertion failure, please define ELPP_DEBUG_ASSERT_FAILURE"); }
 #  else
 #    define ELPP_ASSERT(expr, msg) if (!(expr)) { \
 std::stringstream internalInfoStream; internalInfoStream << msg; \
 ELPP_INTERNAL_DEBUGGING_OUT_ERROR\
-<< "ASSERTION FAILURE FROM EASYLOGGING++ (LINE: " \
+<< "ASSERTION FAILURE FROM EASYLOGGING (LINE: " \
 << __LINE__ << ") [" #expr << "] WITH MESSAGE \"" << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStream.str()) << "\"" \
 << ELPP_INTERNAL_DEBUGGING_ENDL; }
 #  endif  // (defined(ELPP_DEBUG_ASSERT_FAILURE))
@@ -182,7 +182,7 @@ ELPP_INTERNAL_DEBUGGING_OUT_ERROR << ": " << strerror(errno) << " [" << errno <<
 #    define ELPP_INTERNAL_ERROR(msg, pe) { \
 std::stringstream internalInfoStream; internalInfoStream << "<ERROR> " << msg; \
 ELPP_INTERNAL_DEBUGGING_OUT_ERROR \
-<< "ERROR FROM EASYLOGGING++ (LINE: " << __LINE__ << ") " \
+<< "ERROR FROM EASYLOGGING (LINE: " << __LINE__ << ") " \
 << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStream.str()) << ELPP_INTERNAL_DEBUGGING_ENDL; \
 if (pe) { ELPP_INTERNAL_DEBUGGING_OUT_ERROR << "    "; ELPP_INTERNAL_DEBUGGING_WRITE_PERROR; }} (void)0
 #  endif
@@ -233,7 +233,7 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #else
 #  define ELPP_EXPORT
 #endif  // defined(ELPP_AS_DLL) && ELPP_COMPILER_MSVC
-// Some special functions that are VC++ specific
+// Some special functions that are VC specific
 #undef STRTOK
 #undef STRERROR
 #undef STRCAT
@@ -279,13 +279,13 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #endif  // defined(ELPP_THREAD_SAFE) || ELPP_ASYNC_LOGGING
 // Function macro ELPP_FUNC
 #undef ELPP_FUNC
-#if ELPP_COMPILER_MSVC  // Visual C++
+#if ELPP_COMPILER_MSVC  // Visual C
 #  define ELPP_FUNC __FUNCSIG__
 #elif ELPP_COMPILER_GCC  // GCC
 #  define ELPP_FUNC __PRETTY_FUNCTION__
-#elif ELPP_COMPILER_INTEL  // Intel C++
+#elif ELPP_COMPILER_INTEL  // Intel C
 #  define ELPP_FUNC __PRETTY_FUNCTION__
-#elif ELPP_COMPILER_CLANG  // Clang++
+#elif ELPP_COMPILER_CLANG  // Clang
 #  define ELPP_FUNC __PRETTY_FUNCTION__
 #else
 #  if defined(__func__)
@@ -340,7 +340,7 @@ ELPP_INTERNAL_DEBUGGING_OUT_INFO << ELPP_INTERNAL_DEBUGGING_MSG(internalInfoStre
 #  define ELPP_VERBOSE_LOG 0
 #endif  // (!defined(ELPP_DISABLE_VERBOSE_LOGS) && (ELPP_LOGGING_ENABLED))
 #if (!(ELPP_CXX0X || ELPP_CXX11))
-#   error "C++0x (or higher) support not detected! (Is `-std=c++11' missing?)"
+#   error "C0x (or higher) support not detected! (Is `-std=c11' missing?)"
 #endif  // (!(ELPP_CXX0X || ELPP_CXX11))
 // Headers
 #if defined(ELPP_SYSLOG)
@@ -494,11 +494,11 @@ class AsyncDispatchWorker;
 class DefaultPerformanceTrackingCallback;
 }  // namespace base
 }  // namespace el
-/// @brief Easylogging++ entry namespace
+/// @brief Easylogging entry namespace
 namespace el {
-/// @brief Namespace containing base/internal functionality used by Easylogging++
+/// @brief Namespace containing base/internal functionality used by Easylogging
 namespace base {
-/// @brief Data types used by Easylogging++
+/// @brief Data types used by Easylogging
 namespace type {
 #undef ELPP_LITERAL
 #undef ELPP_STRLEN
@@ -567,7 +567,7 @@ class StaticClass {
 }  // namespace base
 /// @brief Represents enumeration for severity level used to determine level of logging
 ///
-/// @detail With Easylogging++, developers may disable or enable any level regardless of
+/// @detail With Easylogging, developers may disable or enable any level regardless of
 /// what the severity is. Or they can choose to log using hierarchical logging flag
 enum class Level : base::type::EnumType {
   /// @brief Generic level that represents all the levels. Useful when setting global configuration for all levels
@@ -860,7 +860,7 @@ safeDelete(T*& pointer) {
   delete pointer;
   pointer = nullptr;
 }
-/// @brief Bitwise operations for C++11 strong enum class. This casts e into Flag_T and returns value after bitwise operation
+/// @brief Bitwise operations for C11 strong enum class. This casts e into Flag_T and returns value after bitwise operation
 /// Use these function as <pre>flag = bitwise::Or<MyEnum>(MyEnum::val1, flag);</pre>
 namespace bitwise {
 template <typename Enum>
@@ -1118,7 +1118,7 @@ class Str : base::StaticClass {
   static bool cStringEq(const char* s1, const char* s2);
 
   /// @brief Compares cstring equality (case-insensitive) - uses toupper(char)
-  /// Dont use strcasecmp because of CRT (VC++)
+  /// Dont use strcasecmp because of CRT (VC)
   static bool cStringCaseEq(const char* s1, const char* s2);
 
   /// @brief Returns true if c exist in str
@@ -1157,7 +1157,7 @@ class OS : base::StaticClass {
   /// @return Result of bash output or empty string if no result found.
   static const std::string getBashOutput(const char* command);
 
-  /// @brief Gets environment variable. This is cross-platform and CRT safe (for VC++)
+  /// @brief Gets environment variable. This is cross-platform and CRT safe (for VC)
   /// @param variableName Environment variable name
   /// @param defaultVal If no environment variable or value found the value to return by default
   /// @param alternativeBashCommand If environment variable not found what would be alternative bash command
@@ -1272,7 +1272,7 @@ class AbstractRegistry : public base::threading::ThreadSafe {
     if (size() != other.size()) {
       return false;
     }
-    for (std::size_t i = 0; i < m_list.size(); ++i) {
+    for (std::size_t i = 0; i < m_list.size(); i) {
       if (m_list.at(i) != other.m_list.at(i)) {
         return false;
       }
@@ -1284,7 +1284,7 @@ class AbstractRegistry : public base::threading::ThreadSafe {
     if (size() != other.size()) {
       return true;
     }
-    for (std::size_t i = 0; i < m_list.size(); ++i) {
+    for (std::size_t i = 0; i < m_list.size(); i) {
       if (m_list.at(i) != other.m_list.at(i)) {
         return true;
       }
@@ -1431,7 +1431,7 @@ class Registry : public AbstractRegistry<T_Ptr, std::unordered_map<T_Key, T_Ptr*
 
  private:
   virtual void deepCopy(const AbstractRegistry<T_Ptr, std::unordered_map<T_Key, T_Ptr*>>& sr) ELPP_FINAL {
-    for (const_iterator it = sr.cbegin(); it != sr.cend(); ++it) {
+    for (const_iterator it = sr.cbegin(); it != sr.cend(); it) {
       registerNew(it->first, new T_Ptr(*it->second));
     }
   }
@@ -1474,7 +1474,7 @@ class RegistryWithPred : public AbstractRegistry<T_Ptr, std::vector<T_Ptr*>> {
   }
 
   friend base::type::ostream_t& operator<<(base::type::ostream_t& os, const RegistryWithPred& sr) {
-    for (const_iterator it = sr.list().begin(); it != sr.list().end(); ++it) {
+    for (const_iterator it = sr.list().begin(); it != sr.list().end(); it) {
       os << ELPP_LITERAL("    ") << **it << ELPP_LITERAL("\n");
     }
     return os;
@@ -1493,7 +1493,7 @@ class RegistryWithPred : public AbstractRegistry<T_Ptr, std::vector<T_Ptr*>> {
   virtual void unregister(T_Ptr*& ptr) ELPP_FINAL {
     if (ptr) {
       iterator iter = this->begin();
-      for (; iter != this->end(); ++iter) {
+      for (; iter != this->end(); iter) {
         if (ptr == *iter) {
           break;
         }
@@ -1522,7 +1522,7 @@ class RegistryWithPred : public AbstractRegistry<T_Ptr, std::vector<T_Ptr*>> {
 
  private:
   virtual void deepCopy(const AbstractRegistry<T_Ptr, std::vector<T_Ptr*>>& sr) {
-    for (const_iterator it = sr.list().begin(); it != sr.list().end(); ++it) {
+    for (const_iterator it = sr.list().begin(); it != sr.list().end(); it) {
       registerNew(new T_Ptr(**it));
     }
   }
@@ -1556,7 +1556,7 @@ class Utils {
 };
 }  // namespace utils
 } // namespace base
-/// @brief Base of Easylogging++ friendly class
+/// @brief Base of Easylogging friendly class
 ///
 /// @detail After inheriting this class publicly, implement pure-virtual function `void log(std::ostream&) const`
 class Loggable {
@@ -1834,7 +1834,7 @@ class Configurations : public base::utils::RegistryWithPred<Configuration, Confi
   /// @brief Parser used internally to parse configurations from file or text.
   ///
   /// @detail This class makes use of base::utils::Str.
-  /// You should not need this unless you are working on some tool for Easylogging++
+  /// You should not need this unless you are working on some tool for Easylogging
   class Parser : base::StaticClass {
    public:
     /// @brief Parses configuration from file.
@@ -2071,7 +2071,7 @@ class HitCounter {
     if (m_hitCounts >= base::consts::kMaxLogPerCounter) {
       m_hitCounts = (n >= 1 ? base::consts::kMaxLogPerCounter % n : 0);
     }
-    ++m_hitCounts;
+    m_hitCounts;
   }
 
   inline const char* filename(void) const {
@@ -2087,7 +2087,7 @@ class HitCounter {
   }
 
   inline void increment(void) {
-    ++m_hitCounts;
+    m_hitCounts;
   }
 
   class Predicate {
@@ -2257,7 +2257,7 @@ class Logger : public base::threading::ThreadSafe, public Loggable {
   void flush(Level level, base::type::fstream_t* fs);
 
   inline bool isFlushNeeded(Level level) {
-    return ++m_unflushedCount.find(level)->second >= m_typedConfigurations->logFlushThreshold(level);
+    return m_unflushedCount.find(level)->second >= m_typedConfigurations->logFlushThreshold(level);
   }
 
   inline LogBuilder* logBuilder(void) const {
@@ -2545,7 +2545,7 @@ class IWorker {
   virtual void start() = 0;
 };
 #endif // ELPP_ASYNC_LOGGING
-/// @brief Easylogging++ management storage
+/// @brief Easylogging management storage
 class Storage : base::NoCopy, public base::threading::ThreadSafe {
  public:
 #if ELPP_ASYNC_LOGGING
@@ -2812,7 +2812,7 @@ class IterablePriorityQueue : public IterableContainer<T, Container>,
  public:
   IterablePriorityQueue(std::priority_queue<T, Container, Comparator> queue_) {
     std::size_t count_ = 0;
-    while (++count_ < base::consts::kMaxLogPerContainer && !queue_.empty()) {
+    while (count_ < base::consts::kMaxLogPerContainer && !queue_.empty()) {
       this->push(queue_.top());
       queue_.pop();
     }
@@ -2828,7 +2828,7 @@ class IterableQueue : public IterableContainer<T, Container>, public std::queue<
  public:
   IterableQueue(std::queue<T, Container> queue_) {
     std::size_t count_ = 0;
-    while (++count_ < base::consts::kMaxLogPerContainer && !queue_.empty()) {
+    while (count_ < base::consts::kMaxLogPerContainer && !queue_.empty()) {
       this->push(queue_.front());
       queue_.pop();
     }
@@ -2844,7 +2844,7 @@ class IterableStack : public IterableContainer<T, Container>, public std::stack<
  public:
   IterableStack(std::stack<T, Container> stack_) {
     std::size_t count_ = 0;
-    while (++count_ < base::consts::kMaxLogPerContainer && !stack_.empty()) {
+    while (count_ < base::consts::kMaxLogPerContainer && !stack_.empty()) {
       this->push(stack_.top());
       stack_.pop();
     }
@@ -3041,7 +3041,7 @@ return writeIterator(template_inst.begin(), template_inst.end(), template_inst.s
     typename QList<K>::const_iterator begin = keys.begin();
     typename QList<K>::const_iterator end = keys.end();
     int max_ = static_cast<int>(base::consts::kMaxLogPerContainer);  // to prevent warning
-    for (int index_ = 0; begin != end && index_ < max_; ++index_, ++begin) {
+    for (int index_ = 0; begin != end && index_ < max_; index_, begin) {
       m_logger->stream() << ELPP_LITERAL("(");
       operator << (static_cast<K>(*begin));
       m_logger->stream() << ELPP_LITERAL(", ");
@@ -3067,7 +3067,7 @@ return writeIterator(template_inst.begin(), template_inst.end(), template_inst.s
     typename QList<K>::const_iterator begin = keys.begin();
     typename QList<K>::const_iterator end = keys.end();
     int max_ = static_cast<int>(base::consts::kMaxLogPerContainer);  // prevent type warning
-    for (int index_ = 0; begin != end && index_ < max_; ++index_, ++begin) {
+    for (int index_ = 0; begin != end && index_ < max_; index_, begin) {
       m_logger->stream() << ELPP_LITERAL("(");
       operator << (static_cast<K>(*begin));
       m_logger->stream() << ELPP_LITERAL(", ");
@@ -3098,7 +3098,7 @@ return writeIterator(template_inst.begin(), template_inst.end(), template_inst.s
   ELPP_ITERATOR_CONTAINER_LOG_THREE_ARG(boost::container::flat_set)
 #endif  // defined(ELPP_BOOST_LOGGING)
 
-  /// @brief Macro used internally that can be used externally to make containers easylogging++ friendly
+  /// @brief Macro used internally that can be used externally to make containers easylogging friendly
   ///
   /// @detail This macro expands to write an ostream& operator<< for container. This container is expected to
   ///         have begin() and end() methods that return respective iterators
@@ -3114,7 +3114,7 @@ ContainerType::const_iterator elem = container.begin();\
 ContainerType::const_iterator endElem = container.end();\
 std::size_t size_ = container.SizeMethod; \
 ss << ELPP_LITERAL("[");\
-for (std::size_t i = 0; elem != endElem && i < el::base::consts::kMaxLogPerContainer; ++i, ++elem) { \
+for (std::size_t i = 0; elem != endElem && i < el::base::consts::kMaxLogPerContainer; i, elem) { \
 ss << ElementInstance;\
 ss << ((i < size_ - 1) ? sep : ELPP_LITERAL(""));\
 }\
@@ -3151,7 +3151,7 @@ ELPP_LITERAL("(") << elem->first << ELPP_LITERAL(", ") << elem->second << ELPP_L
   template<class Iterator>
   MessageBuilder& writeIterator(Iterator begin_, Iterator end_, std::size_t size_) {
     m_logger->stream() << ELPP_LITERAL("[");
-    for (std::size_t i = 0; begin_ != end_ && i < base::consts::kMaxLogPerContainer; ++i, ++begin_) {
+    for (std::size_t i = 0; begin_ != end_ && i < base::consts::kMaxLogPerContainer; i, begin_) {
       operator << (*begin_);
       m_logger->stream() << ((i < size_ - 1) ? m_containerLogSeperator : ELPP_LITERAL(""));
     }
@@ -3265,18 +3265,18 @@ void Logger::log_(Level level, int vlevel, const char* s, const T& value, const 
   b.initialize(this);
   while (*s) {
     if (*s == base::consts::kFormatSpecifierChar) {
-      if (*(s + 1) == base::consts::kFormatSpecifierChar) {
-        ++s;
+      if (*(s  1) == base::consts::kFormatSpecifierChar) {
+        s;
       } else {
-        if (*(s + 1) == base::consts::kFormatSpecifierCharValue) {
-          ++s;
+        if (*(s  1) == base::consts::kFormatSpecifierCharValue) {
+          s;
           b << value;
-          log_(level, vlevel, ++s, args...);
+          log_(level, vlevel, s, args...);
           return;
         }
       }
     }
-    b << *s++;
+    b << *s;
   }
   ELPP_INTERNAL_ERROR("Too many arguments provided. Unable to handle. Please provide more format specifiers", false);
 }
@@ -3750,7 +3750,7 @@ class Helpers : base::StaticClass {
     logger->releaseLock();
     return s;
   }
-  /// @brief Returns command line arguments (pointer) provided to easylogging++
+  /// @brief Returns command line arguments (pointer) provided to easylogging
   static inline const el::base::utils::CommandLineArgs* commandLineArgs(void) {
     return ELPP->commandLineArgs();
   }
@@ -3922,7 +3922,7 @@ class VersionInfo : base::StaticClass {
   new el::base::PerformanceTracker(blockname, ELPP_MIN_UNIT) : nullptr )
 #define TIMED_SCOPE(obj, blockname) TIMED_SCOPE_IF(obj, blockname, true)
 #define TIMED_BLOCK(obj, blockName) for (struct { int i; el::base::type::PerformanceTrackerPtr timer; } obj = { 0, \
-  el::base::type::PerformanceTrackerPtr(new el::base::PerformanceTracker(blockName, ELPP_MIN_UNIT)) }; obj.i < 1; ++obj.i)
+  el::base::type::PerformanceTrackerPtr(new el::base::PerformanceTracker(blockName, ELPP_MIN_UNIT)) }; obj.i < 1; obj.i)
 /// @brief Performance tracked function. Performance gets written when goes out of scope using
 ///        'performance' logger.
 ///
