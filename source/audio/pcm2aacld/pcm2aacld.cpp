@@ -6,8 +6,10 @@ extern "C" {
 }
 
 #include <iostream>
-using namespace std;
+#include <queue>
 
+using namespace std;
+queue<AVPacket> pktlist; 
 static void encode(AVCodecContext *ctx, AVFrame *frame, AVPacket *pkt);
 
 int main(int argc, char* argv[]) {
@@ -88,7 +90,6 @@ int main(int argc, char* argv[]) {
 	data[0] = (uint8_t*)pcm;
 
 	AVPacket pkt;
-	av_init_packet(&pkt);
 
 	for (; ;) {
 		int len = fread(pcm, 1, readSize, fp);
@@ -102,10 +103,17 @@ int main(int argc, char* argv[]) {
 		if (len <= 0) {
 			break;
 		}
-		
+		av_init_packet(&pkt);
 		encode( a_ctx, frame, &pkt);
 	}
 
+
+	size_t total_pkts = pktlist.size(); 
+	for (size_t i = 0; i < total_pkts; i++) {
+		AVPacket pkt = pktlist.front(); 
+		cout << pkt.size << "-------" << i << endl;;
+		pktlist.pop();
+	}
 	encode(a_ctx, nullptr, &pkt);
 	delete pcm;
 	pcm = NULL;
@@ -138,6 +146,7 @@ static void encode(AVCodecContext *ctx, AVFrame *frame, AVPacket *pkt) {
 		pkt->pts = 0;
 		pkt->dts = 0;
 		cout << "pkt size: " << pkt->size << endl; 
-		av_packet_unref(pkt);
+		pktlist.push(*pkt); 
+		//av_packet_unref(pkt);
 	}
 }
