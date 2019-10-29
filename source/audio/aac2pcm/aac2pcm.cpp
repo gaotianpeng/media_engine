@@ -7,6 +7,7 @@ extern "C" {
 
 #include <iostream>
 using namespace std; 
+#define MAX_AUDIO_FRAME_SIZE 192000 // 1 second of 48khz 32bit audio
 
 int main(int argc, char* argv[]) {
 	cout << "aac2pcm starting..." << endl; 
@@ -82,6 +83,7 @@ int main(int argc, char* argv[]) {
 
 
 	FILE* p_out = fopen(out_file, "wb");
+	int index = 0;
 	while (true) {
 		ret = av_read_frame(fmt, pkt);
 		if (ret < 0) {
@@ -94,21 +96,30 @@ int main(int argc, char* argv[]) {
 			cout << "avcodec_send_packet(dec_ctx, pkt) failed!!!" << endl;
 			break;
 		}
-		cout << " avcodec_send_packet success." << endl;
+		//cout << " avcodec_send_packet success." << endl;
+
 		while (ret >= 0) {
 			ret = avcodec_receive_frame(dec_ctx, frame);
 			if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
-				cout << "avcodec_receive_frame AVERROR AVERROR_EOF" << endl;
-				return -1;
+				break;
 			}
 			else if (ret < 0) {
 				cout << "error during decoding!!!" << endl;
 				return -1;
 			}
+
+			ret = swr_convert(a_swr_ctx, out_data, out_nb_samples, (const uint8_t **)frame->data, frame->nb_samples);
+			cout << "samples per channel " << ret << endl; 
+			fwrite(out_data, 1, 4096, p_out);
+			++index;
 		}
+		av_free_packet(pkt);
 	}
 
+	swr_free(&a_swr_ctx); 
 	avformat_close_input(&fmt); 
+	fclose(p_out);
+	avcodec_close(dec_ctx); 
 	cout << "aac2pcm end!!" << endl; 
 	return 0; 
 }

@@ -6,21 +6,20 @@ extern "C" {
 }
 
 #include <iostream>
-#include <queue>
-
 using namespace std;
-queue<AVPacket> pktlist; 
-static void encode(AVCodecContext *ctx, AVFrame *frame, AVPacket *pkt);
+#define MAX_AUDIO_FRAME_SIZE 192000 // 1 second of 48khz 32bit audio
+
+static void encode(AVFormatContext* out_fmt, AVCodecContext *ctx, AVFrame *frame, AVPacket *pkt);
 
 int main(int argc, char* argv[]) {
 	cout << "pcm2aac starting ..." << endl;
 	char infile[] = "e:/ffmpeg/src.pcm";
-
+	char outfile[] = "e:/ffmpeg/ldpcm.pcm";
+	FILE* pFile = fopen(outfile, "wb");
 	av_register_all();
 	avcodec_register_all();
 
 	AVCodec *a_codec = avcodec_find_encoder(AV_CODEC_ID_AAC);
-
 	if (!a_codec) {
 		cout << "avcodec_find_encoder_by_name error" << endl;
 		return -1;
@@ -37,10 +36,21 @@ int main(int argc, char* argv[]) {
 	a_ctx->channel_layout = AV_CH_LAYOUT_STEREO;
 	a_ctx->channels = 2;
 	a_ctx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
-	a_ctx->profile = FF_PROFILE_AAC_ELD;
 	a_ctx->thread_count = 4;
+	AVDictionary *opt = NULL;
+	//aac_he, aac_ld
+	int ret = av_dict_set(&opt, "profile", "aac_ld", 1);
+	if (ret < 0) {
+		cout << "av_dict_set(&opt, \"profile\", \"aac_he\", 0) failed!!!" << endl;
+		return ret;
+	}
 
-	int ret = -1; 
+	ret = av_dict_set(&opt, "profile", "aac_ld", 0);
+	if (ret < 0) {
+		cout << "av_dict_set(&opt, \"profile\", \"LD\", 0); failed!!!" << endl;
+		return ret;
+	}
+
 	ret = avcodec_open2(a_ctx, a_codec, NULL);
 	if (ret < 0) {
 		cout << "avcodec_open2 error" << endl;
@@ -56,6 +66,7 @@ int main(int argc, char* argv[]) {
 		0, 0);
 	if (!actx) {
 		cout << "swr_alloc_set_opts error" << endl;
+		getchar();
 		return -1;
 	}
 	ret = swr_init(actx);
@@ -81,50 +92,117 @@ int main(int argc, char* argv[]) {
 
 	char *pcm = new char[readSize];
 	FILE *fp = fopen(infile, "rb");
-	if (!fp) {
-		cout << "fopen(infile, \"rb\") failed!!!" << endl; 
-		return -1; 
-	}
 	bool bFirst = true;
 	const uint8_t *data[1];
 	data[0] = (uint8_t*)pcm;
 
-	AVPacket pkt;
+	AVPacket* pkt = av_packet_alloc(); 
+	av_init_packet(pkt);
+	int got_picture = 0;
 
+	//////////////////////////////////////////////////////
+	AVCodec* dec_codex = avcodec_find_decoder(AV_CODEC_ID_AAC);
+	AVCodecContext* dec_ctx = avcodec_alloc_context3(dec_codex);
+	dec_ctx->bit_rate = 64000;
+	dec_ctx->sample_rate = 44100;
+	dec_ctx->sample_fmt = AV_SAMPLE_FMT_FLTP;
+	dec_ctx->channel_layout = AV_CH_LAYOUT_STEREO;
+	dec_ctx->channels = 2;
+	dec_ctx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
+	dec_ctx->thread_count = 4;
+	struct SwrContext *au_convert_ctx = NULL;
+	au_convert_ctx = swr_alloc();
+	au_convert_ctx = swr_alloc_set_opts(au_convert_ctx, AV_CH_LAYOUT_STEREO, AV_SAMPLE_FMT_S16, 44100,
+		AV_CH_LAYOUT_STEREO, dec_ctx->sample_fmt, dec_ctx->sample_rate, 0, NULL);
+	swr_init(au_convert_ctx);
+	AVFrame	*frame_out = NULL;
+	frame_out = av_frame_alloc();
+	uint8_t	*out_buffer = NULL;
+	out_buffer = (uint8_t *)av_malloc(MAX_AUDIO_FRAME_SIZE * 2);
+	int index = 0;
+
+	ret = avcodec_open2(dec_ctx, dec_codex, NULL);
+	if (ret < 0) {
+		cout << "avcodec_open2 decoder error" << endl;
+		getchar();
+		return -1;
+	}
+
+	cout << "avcodec_open2 success!" << endl;
 	for (; ;) {
-		int len = fread(pcm, 1, readSize, fp);
-		if (len <= 0) {
+		if (fread(pcm, 1, readSize, fp) <= 0) {
 			break;
 		}
 
-		len = swr_convert(actx, frame->data, frame->nb_samples,
-			data, frame->nb_samples);
-
-		if (len <= 0) {
+		if (swr_convert(actx, frame->data, frame->nb_samples,
+			data, frame->nb_samples) <= 0) {
 			break;
 		}
-		av_init_packet(&pkt);
-		encode( a_ctx, frame, &pkt);
+
+		int ret = -1;
+		ret = avcodec_send_frame(a_ctx, frame);
+		if (ret < 0) {
+			fprintf(stderr, "Error sending the frame to the encoder\n");
+			exit(1);
+		}
+
+		while (ret >= 0) {
+			ret = avcodec_receive_packet(a_ctx, pkt);
+			if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
+				break;
+			}
+			else if (ret < 0) {
+				fprintf(stderr, "Error encoding audio frame\n");
+				exit(1);
+			}
+
+			ret = avcodec_send_frame(a_ctx, frame);
+			if (ret < 0) {
+				fprintf(stderr, "Error sending the frame to the encoder\n");
+				exit(1);
+			}
+
+			while (ret >= 0) {
+				ret = avcodec_receive_packet(a_ctx, pkt);
+				if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
+					break;
+				}
+				else if (ret < 0) {
+					fprintf(stderr, "Error encoding audio frame\n");
+					exit(1);
+				}
+
+				pkt->stream_index = 0;
+				pkt->pts = 0;
+				pkt->dts = 0;
+				cout << pkt->size << endl;
+
+				ret = avcodec_decode_audio4(dec_ctx, frame_out, &got_picture, pkt);
+				if (ret < 0) {
+					cout << "avcodec_decode_audio4() failed!!!" << endl;
+					return -1;
+				}
+				if (got_picture > 0) {
+					swr_convert(au_convert_ctx, &out_buffer, MAX_AUDIO_FRAME_SIZE, (const uint8_t **)frame_out->data, frame_out->nb_samples);
+					printf("index:%5d\t pts:%lld\t packet size:%d\n", index, pkt->pts, pkt->size);
+					fwrite(out_buffer, 1, 4096, pFile);
+					index++;
+				}
+				av_packet_unref(pkt);
+			}
+		}
 	}
 
-
-	size_t total_pkts = pktlist.size(); 
-	for (size_t i = 0; i < total_pkts; i++) {
-		AVPacket pkt = pktlist.front(); 
-		cout << pkt.size << "-------" << i << endl;;
-		pktlist.pop();
-	}
-	encode(a_ctx, nullptr, &pkt);
 	delete pcm;
 	pcm = NULL;
 	avcodec_close(a_ctx);
 	avcodec_free_context(&a_ctx);
-
+	fclose(pFile);
 	cout << "pcm2aac end." << endl;
 	return 0;
 }
 
-static void encode(AVCodecContext *ctx, AVFrame *frame, AVPacket *pkt) {
+static void encode(AVFormatContext* out_fmt, AVCodecContext *ctx, AVFrame *frame, AVPacket *pkt) {
 	int ret = -1;
 	ret = avcodec_send_frame(ctx, frame);
 	if (ret < 0) {
@@ -145,8 +223,8 @@ static void encode(AVCodecContext *ctx, AVFrame *frame, AVPacket *pkt) {
 		pkt->stream_index = 0;
 		pkt->pts = 0;
 		pkt->dts = 0;
-		cout << "pkt size: " << pkt->size << endl; 
-		pktlist.push(*pkt); 
-		//av_packet_unref(pkt);
+		cout << pkt->size << endl; 
+		//ret = av_interleaved_write_frame(out_fmt, pkt);
+		av_packet_unref(pkt);
 	}
 }
