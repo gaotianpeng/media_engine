@@ -10,21 +10,19 @@ extern "C" {
 using namespace std;
 using namespace cv;
 
-static void encode(AVFormatContext* out_fmt, AVCodecContext *ctx, AVFrame *frame, AVPacket *pkt); 
+static void encode(AVFormatContext* out_fmt, AVCodecContext *ctx, AVFrame *frame, AVPacket *pkt);
 
 int main(int argc, char* argv[]) {
-	cout << "pcm2aac starting ..."<< endl; 
+	cout << "pcm2aaceld starting ..." << endl;
 	char infile[] = "e:/ffmpeg/src.pcm";
-	char outfile[] = "e:/ffmpeg/out.aac";
+	char outfile[] = "e:/ffmpeg/output.m4a";
 
 	av_register_all();
 	avcodec_register_all();
 
-	//libfdk_aac
 	AVCodec *a_codec = avcodec_find_encoder(AV_CODEC_ID_AAC);
-	//AVCodec *a_codec = avcodec_find_encoder_by_name("libfdk_aac");
 	if (!a_codec) {
-		cout << "avcodec_find_encoder_by_name error" << endl;
+		cout << "avcodec_find_encoder error" << endl;
 		return -1;
 	}
 	AVCodecContext *a_ctx = avcodec_alloc_context3(a_codec);
@@ -38,23 +36,18 @@ int main(int argc, char* argv[]) {
 	a_ctx->sample_fmt = AV_SAMPLE_FMT_FLTP;
 	a_ctx->channel_layout = AV_CH_LAYOUT_STEREO;
 	a_ctx->channels = 2;
-	a_ctx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
-	a_ctx->thread_count = 4; 
+	a_ctx->flags |= AV_CODEC_FLAG_LOW_DELAY;
+	a_ctx->profile |= FF_PROFILE_AAC_ELD;
+	a_ctx->thread_count = 4;
 	AVDictionary *opt = NULL;
-	//aac_he, aac_ld
-	int ret = av_dict_set(&opt, "profile", "aac_ld", 1);
+
+	int ret = av_dict_set(&opt, "profile", "aac_eld", 0);
 	if (ret < 0) {
-		cout << "av_dict_set(&opt, \"profile\", \"aac_he\", 0) failed!!!" << endl;
+		cout << "av_dict_set(&opt, \"profile\", \"aac_eld\", 0) failed!!!" << endl;
 		return ret;
 	}
 
-	ret = av_dict_set(&opt, "profile", "aac_ld", 0);
-	if (ret < 0) {
-		cout << "av_dict_set(&opt, \"profile\", \"LD\", 0); failed!!!" << endl;
-		return ret;
-	}
-
-	ret = avcodec_open2(a_ctx, a_codec, NULL);
+	ret = avcodec_open2(a_ctx, a_codec, &opt);
 	if (ret < 0) {
 		cout << "avcodec_open2 error" << endl;
 		getchar();
@@ -70,7 +63,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	AVStream *st = avformat_new_stream(out_fmt, NULL);
-	st->codecpar->codec_tag = 0;
+	//st->codecpar->codec_tag = 0;
 	avcodec_parameters_from_context(st->codecpar, a_ctx);
 	av_dump_format(out_fmt, 0, outfile, 1);
 
@@ -79,7 +72,12 @@ int main(int argc, char* argv[]) {
 		cout << "avio_open error" << endl;
 		return -1;
 	}
+
 	ret = avformat_write_header(out_fmt, NULL);
+	if (ret < 0) {
+		cout << "avformat_write_header failed!!!" << endl; 
+		return ret; 
+	}
 
 	SwrContext *actx = NULL;
 	actx = swr_alloc_set_opts(actx,
@@ -114,35 +112,33 @@ int main(int argc, char* argv[]) {
 
 	char *pcm = new char[readSize];
 	FILE *fp = fopen(infile, "rb");
-	bool bFirst = true; 
+	bool bFirst = true;
 	const uint8_t *data[1];
 	data[0] = (uint8_t*)pcm;
 
 	AVPacket pkt;
 	av_init_packet(&pkt);
-	size_t total_size = 0; 
-	TickMeter meter; 
-	for ( ; ;) {
+
+	TickMeter meter;
+	for (; ;) {
 		int len = fread(pcm, 1, readSize, fp);
 		if (len <= 0) {
 			break;
 		}
 
-		meter.reset(); 
-		meter.start(); 
+		meter.reset();
+		meter.start();
 		len = swr_convert(actx, frame->data, frame->nb_samples,
 			data, frame->nb_samples);
 
 		if (len <= 0) {
 			break;
 		}
-		meter.stop(); 
-		//cout << "swr_convert cost:" << meter.getTimeMilli()<< endl; 
-
+		meter.stop();
 		encode(out_fmt, a_ctx, frame, &pkt);
 	}
 
-	encode(out_fmt, a_ctx, nullptr, &pkt); 
+	encode(out_fmt, a_ctx, nullptr, &pkt);
 	delete pcm;
 	pcm = NULL;
 	av_write_trailer(out_fmt);
@@ -151,11 +147,11 @@ int main(int argc, char* argv[]) {
 	avcodec_close(a_ctx);
 	avcodec_free_context(&a_ctx);
 
-	cout << "pcm2aac end." << endl;
+	cout << "pcm2aaceld end." << endl;
 	return 0;
 }
 
-static bool bFirst = true; 
+static bool bFirst = true;
 
 static void encode(AVFormatContext* out_fmt, AVCodecContext *ctx, AVFrame *frame, AVPacket *pkt) {
 	int ret;
@@ -182,7 +178,7 @@ static void encode(AVFormatContext* out_fmt, AVCodecContext *ctx, AVFrame *frame
 
 		pkt->stream_index = 0;
 		pkt->pts = 0;
-		pkt->dts = 0; 
+		pkt->dts = 0;
 
 		ret = av_interleaved_write_frame(out_fmt, pkt);
 		av_packet_unref(pkt);

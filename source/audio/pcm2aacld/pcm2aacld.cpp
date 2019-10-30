@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
 	a_ctx->channels = 2;
 	a_ctx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
 	a_ctx->thread_count = 4;
-	//a_ctx->profile = FF_PROFILE_AAC_ELD;
+	a_ctx->profile = FF_PROFILE_AAC_ELD;
 	AVDictionary *opt = NULL;
 	//aac_he, aac_ld
 	int ret = av_dict_set(&opt, "profile", "aac_ld", 1);
@@ -111,7 +111,7 @@ int main(int argc, char* argv[]) {
 	dec_ctx->channels = 2;
 	dec_ctx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
 	dec_ctx->thread_count = 4;
-	//dec_ctx->profile = FF_PROFILE_AAC_ELD;
+	dec_ctx->profile = FF_PROFILE_AAC_ELD;
 	struct SwrContext *au_convert_ctx = NULL;
 	au_convert_ctx = swr_alloc();
 	au_convert_ctx = swr_alloc_set_opts(au_convert_ctx, AV_CH_LAYOUT_STEREO, AV_SAMPLE_FMT_S16, 44100,
