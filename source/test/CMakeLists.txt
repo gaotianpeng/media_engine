@@ -7,8 +7,4 @@ file(GLOB TEST_SRC *.h *.cc *.cpp)
 
 set(TARGET_SRC ${TEST_SRC})
 
-find_package(OpenCV REQUIRED)
-include_directories(${OpenCV_INCLUDE_DIRS}) # Not needed for CMake >= 2.8.11
-set(LIB_INTERNAL_DEPS ${OpenCV_LIBS})
-
 me_add_executable(test)

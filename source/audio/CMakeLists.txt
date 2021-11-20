@@ -1,7 +1,2 @@
-add_subdirectory(pcm2aac)
-add_subdirectory(pcm2opus)
-add_subdirectory(audioresample)
 add_subdirectory(pcm2aacld)
 add_subdirectory(aac2pcm)
-add_subdirectory(aac2pcmold)
-add_subdirectory(pcm2aaceld)

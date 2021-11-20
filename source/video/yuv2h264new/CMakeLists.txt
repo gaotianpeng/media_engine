@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 2.8.11)
-
 set(MyCategory)
 file(RELATIVE_PATH MyCategory ${PROJECT_SOURCE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}")
 
