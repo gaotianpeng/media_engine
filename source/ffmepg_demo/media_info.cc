@@ -6,7 +6,7 @@ extern "C" {
 
 using namespace std;
 
-TEST(FFmpegMux, MuxTest) {
+TEST(FFmpegMediaInfo, MediaInfo) {
 	const char* file_name = "d:/av_data/believe.mp4";
 	AVFormatContext* fmt_ctx = NULL;
     int video_idx = -1;
@@ -76,7 +76,5 @@ TEST(FFmpegMux, MuxTest) {
     if (fmt_ctx) {
         avformat_close_input(&fmt_ctx);
     }
-
-
 }
 
