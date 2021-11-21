@@ -1,8 +1,9 @@
 add_subdirectory(UI)
-add_subdirectory(mediaengine)
-add_subdirectory(ffmepgtest)
+add_subdirectory(media_engine)
+add_subdirectory(ffmepg_demo)
 add_subdirectory(test)
 add_subdirectory(audio)
 add_subdirectory(video)
+add_subdirectory(ut)
 
 SET_PROPERTY(TARGET test PROPERTY FOLDER "TEST")
