@@ -1,5 +1,6 @@
 add_subdirectory(UI)
 add_subdirectory(media_engine)
+add_subdirectory(flv_parser)
 add_subdirectory(ffmepg_demo)
 add_subdirectory(test)
 add_subdirectory(audio)
