@@ -168,8 +168,10 @@ TEST(FFmpegDecodeAudio, DecodeAudio) {
     decode(a_codec_ctx, pkt, decoded_frame, out_fp);
 
 exit_pos:
+    avcodec_free_context(&a_codec_ctx);
+    av_frame_free(&decoded_frame);
+    av_parser_close(parser);
 	av_packet_free(&pkt);
-    av_free(a_codec_ctx);
     fclose(in_fp);
     fclose(out_fp);
 }
