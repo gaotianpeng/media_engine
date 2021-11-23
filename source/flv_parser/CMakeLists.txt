@@ -1,4 +1,4 @@
-# project(FlvParser)
+set(FIND_MODE REQUIRED)
 
 if(DEFINED QTDIR${_lib_suffix})
 	list(APPEND CMAKE_PREFIX_PATH "${QTDIR${_lib_suffix}}")
@@ -63,3 +63,5 @@ add_custom_command(TARGET FlvParser
 	)
 
 target_link_libraries(FlvParser Qt5::Widgets)
+
+SET_PROPERTY(TARGET FlvParser PROPERTY FOLDER "tools")

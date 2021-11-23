@@ -63,8 +63,6 @@ message(STATUS "The me_UI dir is: " ${me_UI})
 
 qt5_wrap_ui(me_UI_HEADERS ${me_UI})
 
-
-
 add_executable(UI WIN32
 	${me_HEADERS}
 	${me_SOURCES}
