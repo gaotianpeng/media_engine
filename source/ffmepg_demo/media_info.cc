@@ -6,6 +6,7 @@ extern "C" {
 
 using namespace std;
 
+#ifdef MEDIF_INFO
 TEST(FFmpegMediaInfo, MediaInfo) {
 	const char* file_name = "d:/av_data/believe.mp4";
 	AVFormatContext* fmt_ctx = NULL;
@@ -77,4 +78,4 @@ TEST(FFmpegMediaInfo, MediaInfo) {
         avformat_close_input(&fmt_ctx);
     }
 }
-
+#endif // MEDIF_INFO

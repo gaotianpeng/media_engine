@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <gtest/gtest.h>
 #include <iostream>
+#include <gtest/gtest.h>
 
 extern "C" {
 #include "libavutil/frame.h"
@@ -82,6 +82,7 @@ static void decode(AVCodecContext* dec_ctx, AVPacket* pkt, AVFrame* frame,
     }
 }
 
+#ifdef DECODE_AUDIO
 TEST(FFmpegDecodeAudio, DecodeAudio) { 
 	const char* in_file = "d:/av_data/720_ue4.aac";
     const char* out_file = "d:/av_data/720_ue4.pcm";
@@ -175,4 +176,4 @@ exit_pos:
     fclose(in_fp);
     fclose(out_fp);
 }
-
+#endif // DECODE_AUDIO

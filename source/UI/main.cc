@@ -8,7 +8,7 @@ int main(int argc, char* argv[]) {
 	print_test(); 
 	QLabel label("Hello World");
     label.resize(800, 600);
-	label.show(); 
+	label.show();
 
     return a.exec(); 
 }
