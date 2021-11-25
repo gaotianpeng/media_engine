@@ -133,7 +133,6 @@ TEST(FFmpegExtractAAC, ExtractAAC) {
 		av_packet_unref(&pkt);
 	}
 
-
 	if (in_fmt_ctx) {
 		avformat_close_input(&in_fmt_ctx);
 	}
