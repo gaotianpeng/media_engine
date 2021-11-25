@@ -7,6 +7,7 @@ extern "C" {
 #include "libavformat/avformat.h"
 }
 
+#ifdef EXTRACT_H264
 TEST(FFmpegExtractH264, ExtractH264) {
 	AVFormatContext* in_fmt_ctx = NULL;
 	int video_idx = -1;
@@ -99,3 +100,5 @@ TEST(FFmpegExtractH264, ExtractH264) {
 		avformat_close_input(&in_fmt_ctx);
 	}
 }
+
+#endif //EXTRACT_H264

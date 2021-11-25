@@ -14,7 +14,7 @@ using namespace std;
 
 #define ADTS_HEADER_LEN 7
 
-const int sampling_frequencies[] = {
+static const int sampling_frequencies[] = {
 	96000,  // 0x0
 	88200,  // 0x1
 	64000,  // 0x2
