@@ -7,8 +7,7 @@ extern "C" {
 #include "gtest/gtest.h"
 
 static int get_format_from_sample_fmt(const char** fmt,
-    enum AVSampleFormat sample_fmt)
-{
+    enum AVSampleFormat sample_fmt) {
     int i;
     struct sample_fmt_entry {
         enum AVSampleFormat sample_fmt; const char* fmt_be, * fmt_le;
@@ -35,8 +34,7 @@ static int get_format_from_sample_fmt(const char** fmt,
     return AVERROR(EINVAL);
 }
 
-static void fill_samples(double* dst, int nb_samples, int nb_channels, int sample_rate, double* t)
-{
+static void fill_samples(double* dst, int nb_samples, int nb_channels, int sample_rate, double* t) {
     int i, j;
     double tincr = 1.0 / sample_rate, * dstp = dst;
     const double c = 2 * M_PI * 440.0;
@@ -51,6 +49,7 @@ static void fill_samples(double* dst, int nb_samples, int nb_channels, int sampl
     }
 }
 
+#ifdef AUDIO_RESAMPLE
 TEST(FFmpegAudioResample, AudioResample) {
     int64_t src_ch_layout = AV_CH_LAYOUT_STEREO;
     int src_rate = 48000;
@@ -200,3 +199,4 @@ end:
 
     swr_free(&swr_ctx);
 }
+#endif

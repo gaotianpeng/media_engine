@@ -48,7 +48,7 @@ static int adts_header(char* const p_adts_header, const int data_length,
 	}
 	if (i >= frequencies_size)
 	{
-		printf("unsupport samplerate:%d\n", samplerate);
+		printf("unsupported samplerate:%d\n", samplerate);
 		return -1;
 	}
 
@@ -78,6 +78,7 @@ static int adts_header(char* const p_adts_header, const int data_length,
 	return 0;
 }
 
+#ifdef EXTRACT_AAC
 TEST(FFmpegExtractAAC, ExtractAAC) {
 	char* in_file = "d:/av_data/720_ue4.mp4";
 	char* out_file = "d:/av_data/720_ue4_adts.aac";
@@ -125,7 +126,7 @@ TEST(FFmpegExtractAAC, ExtractAAC) {
 
 			int len = fwrite(pkt.data, 1, pkt.size, aac_fp);
 			if (len != pkt.size) {
-				av_log(NULL, AV_LOG_DEBUG, "warning, length of writed data isn't equal pkt.size(%d, %d)\n",
+				av_log(NULL, AV_LOG_DEBUG, "warning, length of writted data isn't equal pkt.size(%d, %d)\n",
 					len,
 					pkt.size);
 			}
@@ -138,3 +139,4 @@ TEST(FFmpegExtractAAC, ExtractAAC) {
 	}
 	fclose(aac_fp);
 }
+#endif
