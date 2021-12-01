@@ -13,7 +13,7 @@ extern "C" {
 
 #include "gtest/gtest.h"
 
-//#define AUDIO_ENCODE 1
+#define AUDIO_ENCODE 1
 
 static bool check_sample_fmt(const AVCodec* codec, enum AVSampleFormat sample_fmt) {
 	const enum AVSampleFormat* p = codec->sample_fmts;
@@ -255,6 +255,5 @@ TEST(FFmpegAudioDecode, AudioDecode) {
     av_frame_free(&frame);
     av_packet_free(&pkt);
     avcodec_free_context(&codec_ctx);
-    printf("main finish, please enter Enter and exit\n");
 }
 #endif
