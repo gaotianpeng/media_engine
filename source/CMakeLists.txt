@@ -6,5 +6,6 @@ add_subdirectory(test)
 add_subdirectory(audio)
 add_subdirectory(video)
 add_subdirectory(ut)
+add_subdirectory(tools)
 
 SET_PROPERTY(TARGET test PROPERTY FOLDER "TEST")
